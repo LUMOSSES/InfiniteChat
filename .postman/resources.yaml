@@ -1,0 +1,6 @@
+# Use this workspace to collaborate
+workspace:
+  id: aead037c-86d8-45e5-895b-9db3a1b3fb1a
+localResources:
+  collections:
+    - ..\InfiniteChat.postman_collection.json
