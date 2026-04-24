@@ -1,0 +1,36 @@
+$kind: http-request
+name: Login with Code
+method: POST
+url: "{{baseUrl}}/api/v1/user/loginCode"
+description: Login with email and a 6-digit verification code.
+order: 3000
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"3033265926@qq.com\",\r
+
+    \  \"code\": \"734093\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("HTTP status is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      const json = pm.response.json();
+
+      pm.test("Business code is success (200)", function () {
+          pm.expect(json.code).to.eql(200, "Business error: " + json.msg);
+      });
+
+      if (json.code === 200) {
+          pm.test("Response data is not null", function () {
+              pm.expect(json.data).to.not.be.null;
+          });
+      }
+    language: text/javascript

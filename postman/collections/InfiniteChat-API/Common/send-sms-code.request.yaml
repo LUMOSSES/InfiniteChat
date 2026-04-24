@@ -1,0 +1,9 @@
+$kind: http-request
+name: Send SMS Code
+method: GET
+url: '{{baseUrl}}/api/v1/user/common/sms'
+description: Send an SMS verification code to the specified email address.
+order: 2000
+queryParams:
+  - key: email
+    value: 'user@example.com'

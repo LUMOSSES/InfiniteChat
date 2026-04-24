@@ -1,0 +1,51 @@
+﻿spring:
+  application:
+    name: MessagingService
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:18375
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:49152/infiniteChat?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: gK3T9n%q2M@j7Z4
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      initialization-fail-timeout: 10000
+      idle-timeout: 30000
+      max-lifetime: 60000
+      connection-timeout: 30000
+      validation-timeout: 3000
+      connection-test-query: SELECT 1
+      pool-name: HikariCP
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 59000
+    password: e65K4t8w2
+    lettuce:
+      pool:
+        min-idle: 4
+        max-idle: 8
+        max-active: 8
+        max-wait: -1ms
+
+  kafka:
+    bootstrap-servers:
+      - 127.0.0.1:19092
+    consumer:
+      group-id: thousnads_word_message_all
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+server:
+  port: 8081

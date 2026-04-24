@@ -1,0 +1,8 @@
+$kind: collection
+name: InfiniteChat API
+description: API collection for the InfiniteChat application, covering user authentication and common utilities.
+variables:
+  - key: baseUrl
+    value: 'http://localhost:10010'
+  - key: token
+    value: ''

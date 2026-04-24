@@ -1,0 +1,9 @@
+$kind: http-request
+name: Send Email Code
+method: GET
+url: '{{baseUrl}}/api/v1/user/common/email'
+description: Send an email verification code to the specified email address.
+order: 1000
+queryParams:
+  - key: email
+    value: 'user@example.com'

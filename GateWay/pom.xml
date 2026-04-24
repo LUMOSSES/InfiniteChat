@@ -96,7 +96,6 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.shanyangcode.infinitechat.gateway.GateWayApplication</mainClass>
-                    <skip>true</skip>
                 </configuration>
                 <executions>
                     <execution>

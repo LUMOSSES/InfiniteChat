@@ -12,6 +12,11 @@
     <modules>
         <module>AuthenticationService</module>
         <module>GateWay</module>
+        <module>RealTimeCommunicationService</module>
+        <module>MessageingService</module>
+        <module>OfflineDataStoreService</module>
+        <module>MomentService</module>
+        <module>ContanctService</module>
     </modules>
 
 </project>
