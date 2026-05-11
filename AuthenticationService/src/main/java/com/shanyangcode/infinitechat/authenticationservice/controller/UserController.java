@@ -33,14 +33,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Result<LoginResponse> register(@Valid @RequestBody LoginRequest request){
+    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest request){
         LoginResponse response = userService.login(request);
 
         return Result.OK(response);
     }
 
     @PostMapping("/loginCode")
-    public Result<LoginCodeResponse> register(@Valid @RequestBody LoginCodeRequest request){
+    public Result<LoginCodeResponse> loginCode(@Valid @RequestBody LoginCodeRequest request){
         LoginCodeResponse response = userService.loginCode(request);
 
         return Result.OK(response);

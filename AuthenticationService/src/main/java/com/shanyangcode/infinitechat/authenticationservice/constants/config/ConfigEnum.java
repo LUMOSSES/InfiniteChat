@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ConfigEnum {
-    TOKEN_SECRET_KEY("tokenSecretKey","goat");
+    TOKEN_SECRET_KEY("tokenSecretKey","goatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoat");
 
 
     private final String value;

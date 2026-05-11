@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/contact/{{loginUserId}}/friend/{{targetUserId}}?userUu\
+  id={{loginUserId}}&receiveUserUuid={{targetUserId}}"
+method: DELETE
+queryParams:
+  userUuid: "{{loginUserId}}"
+  receiveUserUuid: "{{targetUserId}}"
+order: 8000

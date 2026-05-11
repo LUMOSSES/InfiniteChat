@@ -1,0 +1,25 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/user/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "{{email}}",
+      "password": "{{password}}"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status 200", () => pm.response.to.have.status(200));
+      const json = pm.response.json();
+      pm.test("code=200", () => pm.expect(json.code).to.eql(200));
+      if (json.data && json.data.token) {
+        pm.collectionVariables.set('token', json.data.token);
+        pm.collectionVariables.set('loginUserId', json.data.userId);
+        console.log('Token saved:', json.data.token);
+      }
+    language: text/javascript
+order: 3000

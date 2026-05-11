@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/contact/groups"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "userUuid": "{{loginUserId}}",
+      "name": "Test Group",
+      "memberUuids": ["{{loginUserId}}", "{{targetUserId}}"]
+    }
+order: 10000

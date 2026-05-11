@@ -3,7 +3,11 @@
     name: RealTimeCommunicationService
   cloud:
     nacos:
-      server-addr: 127.0.0.1:18375
+      discovery:
+        server-addr: 127.0.0.1:18375
+        failure-tolerance-enabled: true
+        naming-load-cache-at-start: true
+        fail-fast: false
   redis:
     database: 0
     host: 127.0.0.1

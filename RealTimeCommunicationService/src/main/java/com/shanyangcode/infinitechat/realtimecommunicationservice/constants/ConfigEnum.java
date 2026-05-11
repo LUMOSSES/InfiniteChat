@@ -12,7 +12,7 @@ public enum ConfigEnum {
     SMS_ACCESS_KEY_SECRET("smsAccessKeySecret","rGp3V1PL0i72DrdDnwtDXUa0xlLZbi"),
     SMS_SIG_NAME("smsSigName","Zzw"),
     SMS_TEMPLATE_CODE("smsTemplateCode","SMS_468395208"),
-    TOKEN_SECRET_KEY("tokenSecretKey","goat"),
+    TOKEN_SECRET_KEY("tokenSecretKey","goatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoatgoat"),
     PASSWORD_SALT("passwordSalt","goat"),
     WX_STATE("wxState","goat"),
     WORKED_ID("workedId","1"),

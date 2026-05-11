@@ -1,0 +1,17 @@
+$kind: http-request
+name: Accept / Reject Friend Application
+url: "{{baseUrl}}/api/v1/contact/{{loginUserId}}/application/1?applyId={{applyI\
+  d}}&userUuid={{loginUserId}}"
+method: POST
+headers:
+  Content-Type: application/json
+queryParams:
+  applyId: "{{applyId}}"
+  userUuid: "{{loginUserId}}"
+body:
+  type: text
+  content: |-
+    {
+      "status": 1
+    }
+order: 6000

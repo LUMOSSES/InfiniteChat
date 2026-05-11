@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/moment/comment/{{testMomentId}}?commentId={{testCommen\
+  tId}}&userId={{loginUserId}}"
+method: DELETE
+queryParams:
+  commentId: "{{testCommentId}}"
+  userId: "{{loginUserId}}"
+order: 5000

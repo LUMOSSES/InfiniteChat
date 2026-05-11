@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/chat/redPacket/send"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "senderId": {{loginUserId}},
+      "sessionId": {{testSessionId}},
+      "redPacketType": 2,
+      "totalAmount": 10.00,
+      "totalCount": 2,
+      "redPacketWrapperText": "恭喜发财"
+    }
+order: 2000

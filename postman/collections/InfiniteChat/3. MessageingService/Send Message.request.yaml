@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/chat/session"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "senderId": {{loginUserId}},
+      "sessionId": {{testSessionId}},
+      "sessionType": 1,
+      "type": 1,
+      "content": "Hello from Postman!"
+    }
+order: 1000

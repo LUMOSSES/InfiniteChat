@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/contact/group/{{testSessionId}}/members?sessionId={{te\
+  stSessionId}}"
+method: GET
+queryParams:
+  sessionId: "{{testSessionId}}"
+order: 11000

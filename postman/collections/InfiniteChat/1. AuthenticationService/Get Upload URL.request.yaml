@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/user/common/uploadUrl?fileName={{fileName}}"
+method: GET
+queryParams:
+  fileName: "{{fileName}}"
+order: 6000

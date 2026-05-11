@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/user/avatar"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Authorization: "{{token}}"
+body:
+  type: text
+  content: |-
+    {
+      "avatarUrl": "{{avatarUrl}}"
+    }
+order: 5000

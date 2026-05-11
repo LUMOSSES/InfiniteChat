@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/contact/group/exit"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "sessionId": "{{testSessionId}}",
+      "userUuid": "{{loginUserId}}"
+    }
+order: 14000

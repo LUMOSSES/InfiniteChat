@@ -1,0 +1,23 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/moment"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "userId": {{loginUserId}},
+      "text": "Hello InfiniteChat!",
+      "mediaUrls": ["https://example.com/p1.jpg"]
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const json = pm.response.json();
+      if (json.data && json.data.momentId) {
+        pm.collectionVariables.set('testMomentId', json.data.momentId);
+        console.log('MomentId saved:', json.data.momentId);
+      }
+    language: text/javascript
+order: 1000

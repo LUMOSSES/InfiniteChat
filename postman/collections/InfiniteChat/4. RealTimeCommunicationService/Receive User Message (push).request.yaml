@@ -1,0 +1,25 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/message/user"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "receiveUserIds": [{{targetUserId}}],
+      "sendUserId": "{{loginUserId}}",
+      "sessionId": "{{testSessionId}}",
+      "avatar": "https://example.com/avatar.png",
+      "userName": "tester",
+      "type": 1,
+      "messageId": "msg-001",
+      "sessionType": 1,
+      "sessionName": "chat",
+      "sessionAvatar": "https://example.com/s.png",
+      "createdAt": "2026-05-10 10:00:00",
+      "body": {
+        "text": "hello"
+      }
+    }
+order: 2000

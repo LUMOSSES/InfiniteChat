@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/user/common/email?email={{email}}"
+method: GET
+queryParams:
+  email: "{{email}}"
+scripts:
+  - type: afterResponse
+    code: >-
+      pm.test("Status 200", () => pm.response.to.have.status(200));
+
+      const json = pm.response.json();
+
+      pm.test("code=200", () => pm.expect(json.code).to.eql(200));
+
+      pm.test("email returned", () =>
+      pm.expect(json.data.email).to.eql(pm.collectionVariables.get("email")));
+    language: text/javascript
+order: 1000

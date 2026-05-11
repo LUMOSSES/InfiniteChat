@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/chat/redPacket/{{testRedPacketId}}?pageNum=1&pageSize=10"
+method: GET
+queryParams:
+  pageNum: "1"
+  pageSize: "10"
+order: 4000

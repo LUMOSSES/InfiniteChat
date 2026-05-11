@@ -57,10 +57,29 @@ public class NettyServer {
     private EventLoopGroup workerGroup = new NioEventLoopGroup(NettyRuntime.availableProcessors());
 
     @PostConstruct
-    public void start() throws InterruptedException, UnknownHostException, NacosException {
+    public void start() throws InterruptedException, UnknownHostException {
         run();
-        NamingService namingService = nacosServiceManager.getNamingService();
-        namingService.registerInstance(this.serverName, InetAddress.getLocalHost().getHostAddress(), this.port);
+        try {
+            NamingService namingService = nacosServiceManager.getNamingService();
+            namingService.registerInstance(this.serverName, InetAddress.getLocalHost().getHostAddress(), this.port);
+            log.info("netty server registered to nacos");
+        } catch (Exception e) {
+            log.warn("nacos registration failed, will retry: {}", e.getMessage());
+            new Thread(() -> {
+                for (int i = 0; i < 10; i++) {
+                    try {
+                        Thread.sleep(5000);
+                        NamingService ns = nacosServiceManager.getNamingService();
+                        ns.registerInstance(serverName, InetAddress.getLocalHost().getHostAddress(), port);
+                        log.info("netty server registered to nacos (retry success)");
+                        return;
+                    } catch (Exception ignored) {
+                        log.warn("nacos registration retry {} failed", i + 1);
+                    }
+                }
+                log.error("nacos registration failed after all retries");
+            }).start();
+        }
         log.info("netty server start success");
     }
 

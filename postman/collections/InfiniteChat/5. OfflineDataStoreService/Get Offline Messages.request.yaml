@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/offline/message?userId={{loginUserId}}&time=2026-05-01
+  00:00:00"
+method: GET
+queryParams:
+  userId: "{{loginUserId}}"
+  time: 2026-05-01 00:00:00
+order: 1000

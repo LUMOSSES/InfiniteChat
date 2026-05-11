@@ -7,7 +7,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:49152/infiniteChat?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:13306/infiniteChat?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
     password: gK3T9n%q2M@j7Z4
     hikari:
@@ -62,6 +62,9 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:18375
+        failure-tolerance-enabled: true
+        naming-load-cache-at-start: true
+        fail-fast: false
 
 
 # 打印 sql

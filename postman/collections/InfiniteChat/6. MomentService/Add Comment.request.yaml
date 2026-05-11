@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/moment/comment/{{testMomentId}}"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "userId": {{loginUserId}},
+      "comment": "Great post!",
+      "parentCommentId": null
+    }
+order: 4000

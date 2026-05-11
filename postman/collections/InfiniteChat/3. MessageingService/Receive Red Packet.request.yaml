@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/chat/redPacket/receive"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "userId": {{loginUserId}},
+      "redPacketId": {{testRedPacketId}}
+    }
+order: 3000

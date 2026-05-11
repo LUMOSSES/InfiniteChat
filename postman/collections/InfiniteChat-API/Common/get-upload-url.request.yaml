@@ -1,9 +1,0 @@
-$kind: http-request
-name: Get Upload URL
-method: GET
-url: '{{baseUrl}}/api/v1/user/common/uploadUrl'
-description: Get a pre-signed upload URL for file upload (MinIO).
-order: 3000
-queryParams:
-  - key: fileName
-    value: 'example.jpg'

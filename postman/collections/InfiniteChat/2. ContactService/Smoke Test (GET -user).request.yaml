@@ -1,0 +1,5 @@
+$kind: http-request
+name: Smoke Test (GET /user)
+url: "{{baseUrl}}/api/v1/contact/user"
+method: GET
+order: 1000

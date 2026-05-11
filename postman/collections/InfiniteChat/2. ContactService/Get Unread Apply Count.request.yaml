@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/contact/{{loginUserId}}/applyCount?userUuid={{loginUse\
+  rId}}"
+method: GET
+queryParams:
+  userUuid: "{{loginUserId}}"
+order: 4000

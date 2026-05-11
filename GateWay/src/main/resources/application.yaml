@@ -8,6 +8,9 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:18375
+        failure-tolerance-enabled: true
+        naming-load-cache-at-start: true
+        fail-fast: false
     gateway:
       httpclient:
         connect-timeout: 60000
@@ -17,6 +20,7 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins:
+              - "http://localhost:5173"
               - "http://localhost:10010"
             allowedMethods:
               - "GET"

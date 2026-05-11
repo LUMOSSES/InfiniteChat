@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/contact/group/kick"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "sessionId": "{{testSessionId}}",
+      "memberUuid": "{{targetUserId}}",
+      "userUuid": "{{loginUserId}}"
+    }
+order: 13000

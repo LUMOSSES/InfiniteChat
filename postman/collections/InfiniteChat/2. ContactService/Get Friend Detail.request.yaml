@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/contact/{{loginUserId}}/friend/{{targetUserId}}?friend\
+  Uuid={{targetUserId}}&userUuid={{loginUserId}}"
+method: GET
+queryParams:
+  friendUuid: "{{targetUserId}}"
+  userUuid: "{{loginUserId}}"
+order: 7000

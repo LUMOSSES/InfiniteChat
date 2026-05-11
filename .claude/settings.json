@@ -1,0 +1,49 @@
+{
+  "permissions": {
+    "Bash": {
+      "alwaysAllow": true
+    },
+    "Edit": {
+      "alwaysAllow": true
+    },
+    "Write": {
+      "alwaysAllow": true
+    },
+    "Read": {
+      "alwaysAllow": true
+    },
+    "Glob": {
+      "alwaysAllow": true
+    },
+    "Grep": {
+      "alwaysAllow": true
+    },
+    "Agent": {
+      "alwaysAllow": true
+    },
+    "WebFetch": {
+      "alwaysAllow": true
+    },
+    "WebSearch": {
+      "alwaysAllow": true
+    },
+    "NotebookEdit": {
+      "alwaysAllow": true
+    },
+    "AskUserQuestion": {
+      "alwaysAllow": true
+    },
+    "TaskCreate": {
+      "alwaysAllow": true
+    },
+    "TaskUpdate": {
+      "alwaysAllow": true
+    },
+    "EnterPlanMode": {
+      "alwaysAllow": true
+    },
+    "ExitPlanMode": {
+      "alwaysAllow": true
+    }
+  }
+}

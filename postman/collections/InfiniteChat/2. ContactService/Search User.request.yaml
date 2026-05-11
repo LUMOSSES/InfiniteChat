@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/contact/{{loginUserId}}/user?phone={{testPhone}}"
+method: GET
+queryParams:
+  phone: "{{testPhone}}"
+order: 2000

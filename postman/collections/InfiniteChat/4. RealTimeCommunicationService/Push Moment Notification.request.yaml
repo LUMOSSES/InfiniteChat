@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/message/push/moment"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "receiveUserIds": [{{loginUserId}}],
+      "noticeType": 1,
+      "avatar": "https://example.com/avatar.png",
+      "total": 3
+    }
+order: 1000

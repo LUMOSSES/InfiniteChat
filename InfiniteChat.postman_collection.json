@@ -2,38 +2,39 @@
   "info": {
     "_postman_id": "6cce0ed5-2150-4cdb-9ea0-7fd5f40f5743",
     "name": "InfiniteChat",
-    "description": "Postman collection for the existing InfiniteChat gateway and authentication APIs.",
+    "description": "Postman collection covering all 7 InfiniteChat microservices via Gateway (port 10010).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Authentication",
+      "name": "1. AuthenticationService",
+      "description": "认证服务：注册、登录、验证码、头像、上传地址",
       "item": [
         {
           "name": "Send Email Code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test(\"code=200\", () => pm.expect(json.code).to.eql(200));",
+                  "pm.test(\"email returned\", () => pm.expect(json.data.email).to.eql(pm.collectionVariables.get(\"email\")));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/user/common/email?email={{email}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "user",
-                "common",
-                "email"
-              ],
-              "query": [
-                {
-                  "key": "email",
-                  "value": "{{email}}"
-                }
-              ]
-            },
-            "description": "Send a verification code to the configured email address."
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "common", "email"],
+              "query": [{ "key": "email", "value": "{{email}}" }]
+            }
           },
           "response": []
         },
@@ -41,29 +42,16 @@
           "name": "Register",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"code\": \"{{code}}\"\n}"
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"code\": \"{{code}}\",\n  \"userName\": \"{{userName}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/user/register",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "user",
-                "register"
-              ]
-            },
-            "description": "Register a new user with email, password and verification code."
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "register"]
+            }
           },
           "response": []
         },
@@ -74,15 +62,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "let json;",
-                  "try {",
-                  "  json = pm.response.json();",
-                  "} catch (e) {",
-                  "  json = null;",
-                  "}",
-                  "",
-                  "if (json && json.data && json.data.token) {",
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test(\"code=200\", () => pm.expect(json.code).to.eql(200));",
+                  "if (json.data && json.data.token) {",
                   "  pm.collectionVariables.set('token', json.data.token);",
+                  "  pm.collectionVariables.set('loginUserId', json.data.userId);",
+                  "  console.log('Token saved:', json.data.token);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -91,29 +77,16 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/user/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "user",
-                "login"
-              ]
-            },
-            "description": "Login with email and password. Saves response token into the collection variable `token`."
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "login"]
+            }
           },
           "response": []
         },
@@ -124,15 +97,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "let json;",
-                  "try {",
-                  "  json = pm.response.json();",
-                  "} catch (e) {",
-                  "  json = null;",
-                  "}",
-                  "",
-                  "if (json && json.data && json.data.token) {",
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
                   "  pm.collectionVariables.set('token', json.data.token);",
+                  "  pm.collectionVariables.set('loginUserId', json.data.userId);",
+                  "  console.log('Token saved:', json.data.token);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -141,29 +111,16 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{email}}\",\n  \"code\": \"{{code}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/user/loginCode",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "user",
-                "loginCode"
-              ]
-            },
-            "description": "Login with email verification code. Saves response token into the collection variable `token`."
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "loginCode"]
+            }
           },
           "response": []
         },
@@ -172,14 +129,8 @@
           "request": {
             "method": "PATCH",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "{{token}}"
-              }
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "{{token}}" }
             ],
             "body": {
               "mode": "raw",
@@ -187,17 +138,9 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/user/avatar",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "user",
-                "avatar"
-              ]
-            },
-            "description": "Update the current user's avatar. Requires the JWT token in the Authorization header."
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "avatar"]
+            }
           },
           "response": []
         },
@@ -208,24 +151,502 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/user/common/uploadUrl?fileName={{fileName}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "user",
-                "common",
-                "uploadUrl"
-              ],
-              "query": [
-                {
-                  "key": "fileName",
-                  "value": "{{fileName}}"
-                }
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "common", "uploadUrl"],
+              "query": [{ "key": "fileName", "value": "{{fileName}}" }]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. ContactService",
+      "description": "联系人/好友/群组服务",
+      "item": [
+        {
+          "name": "Smoke Test (GET /user)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/user",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "user"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/{{loginUserId}}/user?phone={{testPhone}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "{{loginUserId}}", "user"],
+              "query": [{ "key": "phone", "value": "{{testPhone}}" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Friend",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"msg\": \"Hi, let's be friends!\"\n}"
             },
-            "description": "Generate upload and download URLs for a file."
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/{{loginUserId}}/friend/{{targetUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "{{loginUserId}}", "friend", "{{targetUserId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Unread Apply Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/{{loginUserId}}/applyCount?userUuid={{loginUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "{{loginUserId}}", "applyCount"],
+              "query": [{ "key": "userUuid", "value": "{{loginUserId}}" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Apply List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/{{loginUserId}}/apply?userUuid={{loginUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "{{loginUserId}}", "apply"],
+              "query": [{ "key": "userUuid", "value": "{{loginUserId}}" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Accept / Reject Friend Application",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/{{loginUserId}}/application/1?applyId={{applyId}}&userUuid={{loginUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "{{loginUserId}}", "application", "1"],
+              "query": [
+                { "key": "applyId", "value": "{{applyId}}" },
+                { "key": "userUuid", "value": "{{loginUserId}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Friend Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/{{loginUserId}}/friend/{{targetUserId}}?friendUuid={{targetUserId}}&userUuid={{loginUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "{{loginUserId}}", "friend", "{{targetUserId}}"],
+              "query": [
+                { "key": "friendUuid", "value": "{{targetUserId}}" },
+                { "key": "userUuid", "value": "{{loginUserId}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Friend",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/{{loginUserId}}/friend/{{targetUserId}}?userUuid={{loginUserId}}&receiveUserUuid={{targetUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "{{loginUserId}}", "friend", "{{targetUserId}}"],
+              "query": [
+                { "key": "userUuid", "value": "{{loginUserId}}" },
+                { "key": "receiveUserUuid", "value": "{{targetUserId}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Block Friend",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/{{loginUserId}}/block/{{targetUserId}}?userUuid={{loginUserId}}&receiveUserUuid={{targetUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "{{loginUserId}}", "block", "{{targetUserId}}"],
+              "query": [
+                { "key": "userUuid", "value": "{{loginUserId}}" },
+                { "key": "receiveUserUuid", "value": "{{targetUserId}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Group",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userUuid\": \"{{loginUserId}}\",\n  \"name\": \"Test Group\",\n  \"memberUuids\": [\"{{loginUserId}}\", \"{{targetUserId}}\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/groups",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "groups"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Group Members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/group/{{testSessionId}}/members?sessionId={{testSessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "group", "{{testSessionId}}", "members"],
+              "query": [{ "key": "sessionId", "value": "{{testSessionId}}" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invite to Group",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{testSessionId}}\",\n  \"memberUuids\": [\"{{targetUserId}}\"],\n  \"userUuid\": \"{{loginUserId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/group/invite",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "group", "invite"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Kick Group Member",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{testSessionId}}\",\n  \"memberUuid\": \"{{targetUserId}}\",\n  \"userUuid\": \"{{loginUserId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/group/kick",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "group", "kick"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Exit Group",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{testSessionId}}\",\n  \"userUuid\": \"{{loginUserId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/contact/group/exit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "contact", "group", "exit"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. MessageingService",
+      "description": "消息发送 / 红包服务",
+      "item": [
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderId\": {{loginUserId}},\n  \"sessionId\": {{testSessionId}},\n  \"sessionType\": 1,\n  \"type\": 1,\n  \"content\": \"Hello from Postman!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/session",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "session"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Red Packet",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderId\": {{loginUserId}},\n  \"sessionId\": {{testSessionId}},\n  \"redPacketType\": 2,\n  \"totalAmount\": 10.00,\n  \"totalCount\": 2,\n  \"redPacketWrapperText\": \"恭喜发财\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/redPacket/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "redPacket", "send"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Receive Red Packet",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{loginUserId}},\n  \"redPacketId\": {{testRedPacketId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/redPacket/receive",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "redPacket", "receive"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Red Packet Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/redPacket/{{testRedPacketId}}?pageNum=1&pageSize=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "redPacket", "{{testRedPacketId}}"],
+              "query": [
+                { "key": "pageNum", "value": "1" },
+                { "key": "pageSize", "value": "10" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. RealTimeCommunicationService",
+      "description": "实时推送 / WebSocket / Netty",
+      "item": [
+        {
+          "name": "Push Moment Notification",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiveUserIds\": [{{loginUserId}}],\n  \"noticeType\": 1,\n  \"avatar\": \"https://example.com/avatar.png\",\n  \"total\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/message/push/moment",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "message", "push", "moment"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Receive User Message (push)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiveUserIds\": [{{targetUserId}}],\n  \"sendUserId\": \"{{loginUserId}}\",\n  \"sessionId\": \"{{testSessionId}}\",\n  \"avatar\": \"https://example.com/avatar.png\",\n  \"userName\": \"tester\",\n  \"type\": 1,\n  \"messageId\": \"msg-001\",\n  \"sessionType\": 1,\n  \"sessionName\": \"chat\",\n  \"sessionAvatar\": \"https://example.com/s.png\",\n  \"createdAt\": \"2026-05-10 10:00:00\",\n  \"body\": {\n    \"text\": \"hello\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/message/user",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "message", "user"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. OfflineDataStoreService",
+      "description": "离线消息拉取",
+      "item": [
+        {
+          "name": "Get Offline Messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/offline/message?userId={{loginUserId}}&time=2026-05-01%2000:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "offline", "message"],
+              "query": [
+                { "key": "userId", "value": "{{loginUserId}}" },
+                { "key": "time", "value": "2026-05-01 00:00:00" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. MomentService",
+      "description": "朋友圈：发帖、点赞、评论",
+      "item": [
+        {
+          "name": "Create Moment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.momentId) {",
+                  "  pm.collectionVariables.set('testMomentId', json.data.momentId);",
+                  "  console.log('MomentId saved:', json.data.momentId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{loginUserId}},\n  \"text\": \"Hello InfiniteChat!\",\n  \"mediaUrls\": [\"https://example.com/p1.jpg\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/moment",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "moment"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Like Moment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{loginUserId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/moment/like/{{testMomentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "moment", "like", "{{testMomentId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unlike Moment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/moment/like/{{testMomentId}}?momentId={{testMomentId}}&userId={{loginUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "moment", "like", "{{testMomentId}}"],
+              "query": [
+                { "key": "momentId", "value": "{{testMomentId}}" },
+                { "key": "userId", "value": "{{loginUserId}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Comment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{loginUserId}},\n  \"comment\": \"Great post!\",\n  \"parentCommentId\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/moment/comment/{{testMomentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "moment", "comment", "{{testMomentId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/moment/comment/{{testMomentId}}?commentId={{testCommentId}}&userId={{loginUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "moment", "comment", "{{testMomentId}}"],
+              "query": [
+                { "key": "commentId", "value": "{{testCommentId}}" },
+                { "key": "userId", "value": "{{loginUserId}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Moment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/moment/{{testMomentId}}?momentId={{testMomentId}}&userId={{loginUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "moment", "{{testMomentId}}"],
+              "query": [
+                { "key": "momentId", "value": "{{testMomentId}}" },
+                { "key": "userId", "value": "{{loginUserId}}" }
+              ]
+            }
           },
           "response": []
         }
@@ -249,6 +670,11 @@
       "type": "string"
     },
     {
+      "key": "userName",
+      "value": "testuser",
+      "type": "string"
+    },
+    {
       "key": "code",
       "value": "123456",
       "type": "string"
@@ -256,6 +682,46 @@
     {
       "key": "token",
       "value": "",
+      "type": "string"
+    },
+    {
+      "key": "loginUserId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "targetUserId",
+      "value": "2",
+      "type": "string"
+    },
+    {
+      "key": "testPhone",
+      "value": "13800000000",
+      "type": "string"
+    },
+    {
+      "key": "testSessionId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "testRedPacketId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "testMomentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "testCommentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "applyId",
+      "value": "1",
       "type": "string"
     },
     {
