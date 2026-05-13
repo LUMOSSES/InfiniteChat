@@ -3,9 +3,9 @@
 ## 高优先级
 
 ### 1. AI Agent 接入
-- **项目**：`D:\Desktop\InfinteChat-Agent`（GitHub: `LUMOSSES/IM-Agent`）已存在，Spring Boot 3.x + Spring AI Alibaba 1.0.0-M5（DashScope 通义千问）+ RAG + MCP
+- **项目**：`D:\Desktop\IM-Agent`（GitHub: `LUMOSSES/IM-Agent`），Spring Boot 3.x + Spring AI Alibaba 1.0.0-M5（DashScope 通义千问）+ RAG + MCP
 - **端口**：8087，Gateway 路由 `/api/v1/ai/**` → `http://127.0.0.1:8087` 已配置
-- **待做**：1) 从 `application-template.yml` 复制配置并填入 API key；2) 启动服务；3) 前端 `AiChat.tsx` 已就绪
+- **状态**：已接入，`start-services.ps1` 已包含，`kill-services.ps1` 已包含
 
 ### 2. 红包模块 - 前端 UI
 - **现状**：后端已完整实现（发红包、抢红包、余额扣减、Lua 原子操作、过期退款、Kafka 消息）
@@ -38,6 +38,8 @@
 - **现状**：后端 `PictureMessage` / `PictureMessageBody` 模型已定义，`MessageRcvTypeEnum.PICTURE_MESSAGE(2)` 已存在
 - **缺失**：前端 Chat 只发送文本消息（type=1），没有图片选择/上传/发送功能
 
-### 8. 消息历史记录
-- **现状**：消息只通过离线消息接口加载一次（`offlineApi.getOfflineMessages`），Kafka 消费后标记已读
-- **缺失**：没有分页拉取历史消息的 API，切换会话时不会加载历史记录
+### 8. 消息历史记录 & 离线消息
+- **现象 1**：聊天页面看不到离线消息（离线消息拉取可能返回空或格式不匹配）
+- **现象 2**：刷新页面后消息记录全部消失——消息只存在 React `useState` 中，无持久化
+- **根因**：`Chat.tsx` 只在挂载时调用一次 `offlineApi.getOfflineMessages(time=Date(0))`，拉取后这些消息被标记已读/消费，再次刷新就不会再返回。切换会话也不会重新加载该会话的历史消息
+- **需要**：1) 后端提供分页拉取会话历史消息的 API；2) 前端切换会话时调用该 API 加载历史；3) 调试离线消息拉取为何返回空
