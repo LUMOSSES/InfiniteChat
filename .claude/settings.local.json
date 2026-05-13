@@ -77,7 +77,9 @@
       "PowerShell(Get-ChildItem -Recurse -Force -Path \"D:\\\\Desktop\\\\InfiniteChat\" -Depth 1 | Where-Object { $_.Name -notin @\\('node_modules', 'target', 'dist', 'build', '.git', '__pycache__'\\) } | ForEach-Object { if \\($_.PSIsContainer\\) { $_.FullName + \"/\" } else { $_.FullName } } | Sort-Object)",
       "Bash(git *)",
       "Bash(gh auth *)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Read(//d/Desktop/InfinteChat-Agent/**)",
+      "Read(//d/Desktop/IM-Agent/**)"
     ]
   }
 }
