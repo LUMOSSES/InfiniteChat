@@ -3,6 +3,7 @@ package com.shanyangcode.infinitechat.momentservice.service.impl;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shanyangcode.infinitechat.momentservice.Exception.DatabaseException;
 import com.shanyangcode.infinitechat.momentservice.Exception.UserException;
@@ -31,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -195,6 +198,40 @@ public class MomentCommentServiceImpl extends ServiceImpl<MomentCommentMapper, M
         momentComment.setUpdateTime(new Date());
 
         this.update(momentComment, commentQueryWrapper);
+    }
+
+    @Override
+    public List<MomentCommentVO> getCommentList(Long momentId, Integer page, Integer size) {
+        QueryWrapper<MomentComment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MomentConstants.FIELD_MOMENT_ID, momentId)
+                .eq(MomentConstants.FIELD_IS_DELETE, MomentConstants.NOT_DELETED)
+                .orderByAsc("create_time");
+
+        Page<MomentComment> commentPage = this.page(new Page<>(page, size), queryWrapper);
+        return commentPage.getRecords().stream().map(comment -> {
+            MomentCommentVO vo = new MomentCommentVO();
+            BeanUtils.copyProperties(comment, vo);
+            vo.setCommentId(comment.getCommentId());
+            vo.setComment(comment.getComment());
+            vo.setMomentId(comment.getMomentId());
+            vo.setUserId(comment.getUserId());
+            vo.setCreateTime(comment.getCreateTime() != null ? comment.getCreateTime().toString() : null);
+            User user = userService.getById(comment.getUserId());
+            if (user != null) {
+                vo.setUserName(user.getUserName());
+            }
+            if (comment.getParentCommentId() != null) {
+                vo.setParentCommentId(comment.getParentCommentId());
+                MomentComment parent = this.getById(comment.getParentCommentId());
+                if (parent != null) {
+                    User parentUser = userService.getById(parent.getUserId());
+                    if (parentUser != null) {
+                        vo.setParentUserName(parentUser.getUserName());
+                    }
+                }
+            }
+            return vo;
+        }).collect(Collectors.toList());
     }
 
 }

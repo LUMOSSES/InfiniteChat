@@ -2,6 +2,7 @@ package com.shanyangcode.infinitechat.realtimecommunicationservice.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shanyangcode.infinitechat.realtimecommunicationservice.constants.MessageRcvTypeEnum;
 import com.shanyangcode.infinitechat.realtimecommunicationservice.constants.PushTypeEnum;
 import com.shanyangcode.infinitechat.realtimecommunicationservice.data.PushMoment.FriendApplicationNotification;
@@ -62,11 +63,12 @@ public class NettyMessageService {
             case TEXT_MESSAGE:
                 TextMessage textMessage = new TextMessage();
                 BeanUtils.copyProperties(message, textMessage);
-                TextMessageBody textBean = BeanUtil.toBean(message.getBody(), TextMessageBody.class);
+                // Long→String conversion for fields sent to frontend via WebSocket JSON
+                copyLongFields(message, textMessage);
+                TextMessageBody textBean = convertBody(message.getBody(), TextMessageBody.class);
                 textMessage.setBody(textBean);
                 log.info("textMessage:{}", textMessage);
-                List<Long> textReceiveUserIds = textMessage.getReceiveUserIds();
-                textMessage.setReceiveUserIds(null);
+                List<Long> textReceiveUserIds = message.getReceiveUserIds();
                 for (Long textReceiveUser : textReceiveUserIds) {
                     log.info("textReceiveUser:{}", textReceiveUser);
                     log.info("是否存在管道: {}", ChannelManager.getChannelByUserId(textReceiveUser.toString()));
@@ -79,10 +81,11 @@ public class NettyMessageService {
             case PICTURE_MESSAGE:
                 PictureMessage pictureMessage = new PictureMessage();
                 BeanUtils.copyProperties(message, pictureMessage);
-                PictureMessageBody pictureBean = BeanUtil.toBean(message.getBody(), PictureMessageBody.class);
+                copyLongFields(message, pictureMessage);
+                PictureMessageBody pictureBean = convertBody(message.getBody(), PictureMessageBody.class);
                 pictureMessage.setBody(pictureBean);
                 log.info("pictureMessage:{}", pictureMessage);
-                List<Long> pictureReceiveUserIds = pictureMessage.getReceiveUserIds();
+                List<Long> pictureReceiveUserIds = message.getReceiveUserIds();
                 for (Long pictureReceiveUser : pictureReceiveUserIds) {
                     if (ChannelManager.getChannelByUserId(pictureReceiveUser.toString()) != null) {
                         sendPush(PushTypeEnum.MESSAGE_NOTIFICATION, pictureMessage, pictureReceiveUser.toString());
@@ -90,6 +93,51 @@ public class NettyMessageService {
                 }
                 break;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T convertBody(Object body, Class<T> targetClass) {
+        if (body == null) {
+            try {
+                return targetClass.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                log.error("Failed to create instance of {}", targetClass.getSimpleName(), e);
+                return null;
+            }
+        }
+        if (body instanceof String) {
+            // Fastjson sends body as string, Jackson deserializes it as String
+            String bodyStr = (String) body;
+            // Try to parse as JSON object first (e.g., {"content":"hello","replyId":"..."})
+            if (bodyStr.trim().startsWith("{")) {
+                try {
+                    return new ObjectMapper().readValue(bodyStr, targetClass);
+                } catch (Exception e) {
+                    log.warn("Failed to parse body as JSON object, treating as plain content: {}", bodyStr);
+                }
+            }
+            // Plain text content: create target bean and populate known fields
+            try {
+                T bean = targetClass.getDeclaredConstructor().newInstance();
+                try {
+                    targetClass.getMethod("setContent", String.class).invoke(bean, bodyStr);
+                } catch (NoSuchMethodException ignored) {
+                    // target class doesn't have a content field
+                }
+                return bean;
+            } catch (Exception e) {
+                log.error("Failed to create bean from string body", e);
+                return null;
+            }
+        }
+        // Body is a Map (Jackson deserialized JSON object) — use BeanUtil
+        return BeanUtil.toBean(body, targetClass);
+    }
+
+    private void copyLongFields(ReceiveMessageRequest src, com.shanyangcode.infinitechat.realtimecommunicationservice.model.Message dest) {
+        dest.setSendUserId(src.getSendUserId() != null ? src.getSendUserId().toString() : null);
+        dest.setSessionId(src.getSessionId() != null ? src.getSessionId().toString() : null);
+        dest.setMessageId(src.getMessageId() != null ? src.getMessageId().toString() : null);
     }
 
     public void sendNoticeMoment(PushMomentRequest request) {

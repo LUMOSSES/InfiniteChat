@@ -21,7 +21,9 @@ spring:
           '[/**]':
             allowedOrigins:
               - "http://localhost:5173"
+              - "http://127.0.0.1:5173"
               - "http://localhost:10010"
+              - "http://127.0.0.1:10010"
             allowedMethods:
               - "GET"
               - "POST"
@@ -70,3 +72,11 @@ spring:
           uri: lb://ContactService
           predicates:
             - Path=/api/v1/contact/**
+
+        - id: InfiniteChatAgent
+          uri: http://127.0.0.1:8087
+          predicates:
+            - Path=/api/v1/ai/**
+          filters:
+            - RewritePath=/api/v1/ai/(?<segment>.*), /api/${segment}
+            - AddRequestHeader=X-Request-Source, InfiniteChat-GateWay

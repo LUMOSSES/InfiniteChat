@@ -34,6 +34,7 @@ export interface ContactUser {
   userName: string;
   avatar?: string;
   email: string;
+  sessionId?: string;
 }
 
 export interface FriendApplication {
@@ -79,8 +80,9 @@ export interface MomentComment {
   commentId: string;
   momentId: string;
   userId: string;
-  parentCommentId?: string;
+  userName: string;
   comment: string;
+  parentCommentId?: string;
+  parentUserName?: string;
   createTime: string;
-  user?: ContactUser;
 }

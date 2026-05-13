@@ -7,9 +7,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class FriendDetailResponse {
 
-    private String userUuid;
+    private String userId;
 
-    private String nickname;
+    private String userName;
 
     private String avatar;
 

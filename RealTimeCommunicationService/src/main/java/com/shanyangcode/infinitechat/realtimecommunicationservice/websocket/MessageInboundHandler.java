@@ -13,14 +13,17 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import com.shanyangcode.infinitechat.realtimecommunicationservice.websocket.WebSocketHandshakeHandler.HandshakeCompleteEvent;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.net.InetAddress;
+import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -101,6 +104,7 @@ public class MessageInboundHandler extends SimpleChannelInboundHandler<TextWebSo
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        log.info("userEventTriggered: evt type={}", evt != null ? evt.getClass().getName() : "null");
         // 处理心跳
         if (evt instanceof IdleStateEvent){
             IdleStateEvent event = (IdleStateEvent) evt;
@@ -118,9 +122,15 @@ public class MessageInboundHandler extends SimpleChannelInboundHandler<TextWebSo
         }
         // 处理握手，协议升级
 
-        if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete){
-            String token = NettyUtils.getAttr(ctx.channel(), NettyUtils.TOKEN);
-            String userUuid = NettyUtils.getAttr(ctx.channel(), NettyUtils.UID);
+        if (evt instanceof HandshakeCompleteEvent){
+            HandshakeCompleteEvent handshake = (HandshakeCompleteEvent) evt;
+
+            // Browser WebSocket API cannot set custom HTTP headers.
+            // Extract token and userUuid from URL query parameters.
+            Map<String, List<String>> params = new QueryStringDecoder(handshake.requestUri()).parameters();
+            String userUuid = getParam(params, "userUuid");
+            String token = getParam(params, "token");
+            log.info("HandshakeComplete: token={}, userUuid={}", token, userUuid);
 
             // 对 token 进行校验，不通过则直接进行关闭
             if (!validateToken(userUuid, token)){
@@ -155,7 +165,11 @@ public class MessageInboundHandler extends SimpleChannelInboundHandler<TextWebSo
         try{
             ChannelManager.removeChannelUser(ctx.channel());
             if (userUuid != null){
-                ChannelManager.removeUserChannel(userUuid);
+                // 只有当关闭的管道就是当前注册的管道时才移除用户映射，防止新连接的管道被误删
+                Channel currentChannel = ChannelManager.getChannelByUserId(userUuid);
+                if (currentChannel == null || currentChannel == ctx.channel()) {
+                    ChannelManager.removeUserChannel(userUuid);
+                }
                 log.info("客户端关闭连接UserId：{}, 客户端地址为：{}",userUuid, ctx.channel().remoteAddress());
             }
         }catch (Exception e){
@@ -171,13 +185,19 @@ public class MessageInboundHandler extends SimpleChannelInboundHandler<TextWebSo
     }
 
     private boolean validateToken(String userUuid, String token){
+        try {
+            Claims claims = JwtUtil.parse(token);
+            String userId = claims.getSubject();
+            return userId != null && userId.equals(userUuid);
+        } catch (Exception e) {
+            log.warn("Token validation failed for userUuid={}: {}", userUuid, e.getMessage());
+            return false;
+        }
+    }
 
-//        return true;
-        Claims claims = JwtUtil.parse(token);
-        String userId = claims.getSubject();
-
-        // 校验不通过则直接返回 false
-        return userId != null && userId.equals(userUuid);
+    private String getParam(Map<String, List<String>> params, String key) {
+        List<String> values = params.get(key);
+        return values != null && !values.isEmpty() ? values.get(0) : "";
     }
 
     @Override

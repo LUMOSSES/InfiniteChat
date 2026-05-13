@@ -8,6 +8,7 @@ import Chat from './pages/Chat';
 import Contacts from './pages/Contacts';
 import Moments from './pages/Moments';
 import Generator from './pages/Generator';
+import AiChat from './pages/AiChat';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -28,6 +29,7 @@ export default function App() {
             <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
             <Route path="/moments" element={<ProtectedRoute><Moments /></ProtectedRoute>} />
             <Route path="/generator" element={<ProtectedRoute><Generator /></ProtectedRoute>} />
+            <Route path="/ai" element={<ProtectedRoute><AiChat /></ProtectedRoute>} />
           </Route>
         </Routes>
       </AuthProvider>

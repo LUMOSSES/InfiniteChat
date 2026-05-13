@@ -12,9 +12,9 @@ import java.util.List;
 public class ReceiveMessageRequest {
     private List<Long> receiveUserIds;
 
-    private String sendUserId;
+    private Long sendUserId;
 
-    private String sessionId;
+    private Long sessionId;
 
     private String avatar;
 
@@ -22,7 +22,7 @@ public class ReceiveMessageRequest {
 
     private Integer type;
 
-    private String messageId;
+    private Long messageId;
 
     private Integer sessionType;
 

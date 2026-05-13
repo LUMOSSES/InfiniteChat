@@ -19,6 +19,6 @@ public class RvcMsgServiceImpl implements RcvMsgServer {
     public ReceiveMessageResponse receiveMessage(@Valid ReceiveMessageRequest request) {
         nettyMessageService.sendMessageToUser(request);
 
-        return new ReceiveMessageResponse();
+        return new ReceiveMessageResponse().setMessageId(request.getMessageId());
     }
 }

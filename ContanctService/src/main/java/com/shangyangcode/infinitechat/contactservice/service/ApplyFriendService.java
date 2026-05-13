@@ -9,7 +9,10 @@ import com.shangyangcode.infinitechat.contactservice.data.ModifyApply.ModifyAppl
 import com.shangyangcode.infinitechat.contactservice.data.ModifyApply.ModifyApplyResponse;
 import com.shangyangcode.infinitechat.contactservice.data.UnreadApply.UnreadApplyRequest;
 import com.shangyangcode.infinitechat.contactservice.data.UnreadApply.UnreadApplyResponse;
+import com.shangyangcode.infinitechat.contactservice.data.ApplyList.FriendApplicationDTO;
 import com.shangyangcode.infinitechat.contactservice.model.ApplyFriend;
+
+import java.util.List;
 
 public interface ApplyFriendService extends IService<ApplyFriend> {
     /**
@@ -26,4 +29,9 @@ public interface ApplyFriendService extends IService<ApplyFriend> {
 
     ModifyApplyResponse modifyApply(ModifyApplyRequest request) throws Exception;
 
+    List<FriendApplicationDTO> getApplyList(String userUuid);
+
+    void acceptApply(String userUuid, String applyId) throws Exception;
+
+    void rejectApply(String userUuid, String applyId);
 }

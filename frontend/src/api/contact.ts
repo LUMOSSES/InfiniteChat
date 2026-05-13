@@ -2,26 +2,26 @@ import api from './client';
 import type { ApiResult, ContactUser, FriendApplication } from '../types';
 
 export const contactApi = {
-  searchUser: (keyword: string) =>
-    api.get<ApiResult<ContactUser[]>>('/v1/contact/search', { params: { keyword } }),
+  searchUser: (userUuid: string, keyword: string) =>
+    api.get<ApiResult<ContactUser[]>>('/v1/contact/search', { params: { userUuid, keyword } }),
 
-  addFriend: (targetId: string, msg?: string) =>
-    api.post<ApiResult<null>>('/v1/contact/friend/apply', { targetId, msg }),
+  addFriend: (userUuid: string, targetId: string, msg?: string) =>
+    api.post<ApiResult<null>>('/v1/contact/friend/apply', { userUuid, targetId, msg }),
 
-  getApplyList: () =>
-    api.get<ApiResult<FriendApplication[]>>('/v1/contact/friend/apply/list'),
+  getApplyList: (userUuid: string) =>
+    api.get<ApiResult<FriendApplication[]>>('/v1/contact/friend/apply/list', { params: { userUuid } }),
 
-  getUnreadApplyCount: () =>
-    api.get<ApiResult<number>>('/v1/contact/friend/apply/unread'),
+  getUnreadApplyCount: (userUuid: string) =>
+    api.get<ApiResult<number>>('/v1/contact/friend/apply/unread', { params: { userUuid } }),
 
-  acceptApply: (applyId: string) =>
-    api.post<ApiResult<null>>('/v1/contact/friend/apply/accept', { applyId }),
+  acceptApply: (userUuid: string, applyId: string) =>
+    api.post<ApiResult<null>>('/v1/contact/friend/apply/accept', { userUuid, applyId }),
 
-  rejectApply: (applyId: string) =>
-    api.post<ApiResult<null>>('/v1/contact/friend/apply/reject', { applyId }),
+  rejectApply: (userUuid: string, applyId: string) =>
+    api.post<ApiResult<null>>('/v1/contact/friend/apply/reject', { userUuid, applyId }),
 
-  getFriendList: () =>
-    api.get<ApiResult<ContactUser[]>>('/v1/contact/friend/list'),
+  getFriendList: (userUuid: string) =>
+    api.get<ApiResult<ContactUser[]>>('/v1/contact/friend/list', { params: { userUuid } }),
 
   getFriendDetail: (friendId: string) =>
     api.get<ApiResult<ContactUser>>('/v1/contact/friend/detail', { params: { friendId } }),

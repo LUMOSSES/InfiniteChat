@@ -1,9 +1,21 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import UserAvatar from './UserAvatar';
+import { MessageCircle, Users, Camera, Wand2, Bot, LogOut, Menu, X } from 'lucide-react';
+import { useState } from 'react';
+
+const navItems = [
+  { to: '/chat', label: 'Chat', icon: MessageCircle },
+  { to: '/contacts', label: 'Contacts', icon: Users },
+  { to: '/moments', label: 'Moments', icon: Camera },
+  { to: '/ai', label: 'AI Assistant', icon: Bot },
+  { to: '/generator', label: 'Generator', icon: Wand2 },
+];
 
 export default function Layout() {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -11,77 +23,128 @@ export default function Layout() {
   };
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `text-sm font-semibold tracking-wide px-4 py-2 rounded-xl transition-all duration-200 ${
+    `relative flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
       isActive
-        ? 'bg-ink text-white'
-        : 'text-ink-light hover:text-ink hover:bg-cream'
+        ? 'bg-primary text-white shadow-sm'
+        : 'text-text-secondary hover:text-text hover:bg-surface-hover'
+    }`;
+
+  const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex flex-col items-center gap-0.5 py-2 px-3 rounded-lg text-[10px] font-medium transition-all duration-200 ${
+      isActive ? 'text-primary' : 'text-text-muted'
     }`;
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
-      <header className="bg-white/90 backdrop-blur-sm sticky top-0 z-50 border-b-2 border-ink">
-        <div className="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-10">
-            <NavLink to="/" className="text-xl font-bold text-ink tracking-tight">
-              InfiniteChat
+    <div className="min-h-screen bg-bg flex flex-col">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          {/* Left: Brand + Nav */}
+          <div className="flex items-center gap-6">
+            <NavLink to="/" className="flex items-center gap-2 group shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
+                <MessageCircle className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-lg font-bold text-text tracking-tight hidden sm:block">
+                InfiniteChat
+              </span>
             </NavLink>
+
             {isAuthenticated && (
               <nav className="hidden md:flex items-center gap-1">
-                <NavLink to="/chat" className={linkClass}>Chat</NavLink>
-                <NavLink to="/contacts" className={linkClass}>Contacts</NavLink>
-                <NavLink to="/moments" className={linkClass}>Moments</NavLink>
-                <NavLink to="/generator" className={linkClass}>Generator</NavLink>
+                {navItems.map(({ to, label, icon: Icon }) => (
+                  <NavLink key={to} to={to} className={linkClass}>
+                    <Icon className="w-4 h-4" />
+                    {label}
+                  </NavLink>
+                ))}
               </nav>
             )}
           </div>
-          <div className="flex items-center gap-4">
+
+          {/* Right: User + Logout */}
+          <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
-                {user?.avatar ? (
-                  <img src={user.avatar} alt="" className="w-8 h-8 rounded-full object-cover border-2 border-ink" />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-ink flex items-center justify-center text-white text-xs font-bold">
-                    {user?.userName?.charAt(0)?.toUpperCase() || '?'}
-                  </div>
-                )}
-                <span className="text-sm font-medium text-ink hidden sm:block">{user?.userName}</span>
+                <UserAvatar src={user?.avatar} name={user?.userName} size="sm" />
+                <span className="text-sm font-medium text-text hidden sm:block">{user?.userName}</span>
                 <button
                   onClick={handleLogout}
-                  className="text-xs font-semibold text-ink-lighter hover:text-red-500 tracking-wide transition-colors"
+                  className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-error transition-colors"
                 >
-                  LOGOUT
+                  <LogOut className="w-3.5 h-3.5" />
+                  Logout
+                </button>
+
+                {/* Mobile menu toggle */}
+                <button
+                  onClick={() => setMobileOpen(!mobileOpen)}
+                  className="md:hidden p-2 rounded-lg text-text-secondary hover:bg-surface-hover transition-colors"
+                >
+                  {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
               </>
             ) : (
               <NavLink
                 to="/login"
-                className="text-sm font-semibold text-ink px-5 py-2 rounded-xl border-2 border-ink hover:bg-ink hover:text-white transition-all duration-200"
+                className="text-sm font-semibold text-white bg-primary hover:bg-primary-dark px-5 py-2 rounded-xl transition-all duration-200 shadow-sm"
               >
-                SIGN IN
+                Sign In
               </NavLink>
             )}
           </div>
         </div>
 
-        {isAuthenticated && (
-          <nav className="md:hidden flex border-t-2 border-ink">
-            {[['/chat','Chat'],['/contacts','Contacts'],['/moments','Moments'],['/generator','Gen']].map(([p, l]) => (
-              <NavLink key={p} to={p}
+        {/* Mobile nav dropdown */}
+        {isAuthenticated && mobileOpen && (
+          <nav className="md:hidden border-t border-border bg-surface px-4 py-2 space-y-1">
+            {navItems.map(({ to, label, icon: Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
-                  `flex-1 py-3 text-xs font-semibold text-center tracking-wide transition-all ${
-                    isActive ? 'text-ink bg-cream border-b-2 border-ink' : 'text-ink-light hover:bg-cream'
-                  }`}
-              >{l}</NavLink>
+                  `flex items-center gap-3 px-5 py-3 rounded-xl text-sm font-medium transition-all ${
+                    isActive ? 'bg-primary-bg text-primary' : 'text-text-secondary hover:bg-surface-hover'
+                  }`
+                }
+              >
+                <Icon className="w-4 h-4" />
+                {label}
+              </NavLink>
             ))}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-error hover:bg-error-bg w-full transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
           </nav>
         )}
       </header>
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-8">
+      {/* Mobile bottom nav */}
+      {isAuthenticated && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-lg border-t border-border">
+          <div className="flex justify-around px-2">
+            {navItems.map(({ to, label, icon: Icon }) => (
+              <NavLink key={to} to={to} className={mobileLinkClass}>
+                <Icon className="w-5 h-5" />
+                {label}
+              </NavLink>
+            ))}
+          </div>
+        </nav>
+      )}
+
+      {/* Main content */}
+      <main className="flex-1 w-full px-4 sm:px-6 pb-20 md:pb-8">
         <Outlet />
       </main>
 
-      <footer className="py-5 text-center text-xs text-ink-lighter tracking-wider">
+      {/* Footer */}
+      <footer className="hidden md:block py-6 text-center text-xs text-text-muted border-t border-border">
         InfiniteChat &copy; {new Date().getFullYear()} &mdash; Built for real connections
       </footer>
     </div>

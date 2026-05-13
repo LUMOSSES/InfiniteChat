@@ -25,5 +25,7 @@ public interface MomentLikeService extends IService<MomentLike> {
     CreateLikeResponse likeMomentResponse(Long momentId, CreateLikeRequest request) throws Exception;
 
     DeleteLikeResponse deleteLikeMoment(DeleteLikeRequest request);
+
+    void unlikeMoment(Long momentId, Long userId);
 }
 

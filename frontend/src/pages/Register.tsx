@@ -2,14 +2,28 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { authApi } from '../api/auth';
+import { Mail, Lock, Key, MessageCircle, AlertCircle, Loader2 } from 'lucide-react';
 import type { AxiosError } from 'axios';
 
 function getErrorMessage(err: unknown): string {
   if (err && typeof err === 'object' && 'response' in err) {
-    const axiosErr = err as AxiosError<{ msg?: string }>;
-    return axiosErr.response?.data?.msg || axiosErr.message;
+    const axiosErr = err as AxiosError<{ msg?: string; code?: number }>;
+    const body = axiosErr.response?.data;
+    if (body?.msg) return body.msg;
+    if (body?.code) return `Error ${body.code}`;
+    return axiosErr.message;
   }
   return err instanceof Error ? err.message : 'Something went wrong';
+}
+
+function BgOrbs() {
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+      <div className="absolute top-[10%] right-[12%] w-72 h-72 rounded-full bg-primary/5 blur-3xl" />
+      <div className="absolute bottom-[15%] left-[6%] w-80 h-80 rounded-full bg-primary/5 blur-3xl" />
+      <div className="absolute top-[55%] left-[55%] w-48 h-48 rounded-full bg-indigo-400/5 blur-3xl" />
+    </div>
+  );
 }
 
 export default function Register() {
@@ -52,97 +66,137 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center bg-cream px-6">
-      <div className="w-full max-w-lg">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-ink tracking-tight">InfiniteChat</h1>
-          <p className="text-ink-lighter mt-2 text-base">Create your account</p>
-        </div>
-
-        <div className="bg-white border-2 border-ink rounded-3xl p-10">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-xs font-bold text-ink tracking-[0.15em] mb-2.5">
-                EMAIL ADDRESS
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                className="w-full px-5 py-3.5 rounded-xl border-2 border-ink bg-white text-ink placeholder:text-ink-lighter
-                           focus:outline-none focus:ring-4 focus:ring-ink/10 transition-all text-base"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-ink tracking-[0.15em] mb-2.5">
-                PASSWORD
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 6 characters"
-                required
-                minLength={6}
-                className="w-full px-5 py-3.5 rounded-xl border-2 border-ink bg-white text-ink placeholder:text-ink-lighter
-                           focus:outline-none focus:ring-4 focus:ring-ink/10 transition-all text-base"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-ink tracking-[0.15em] mb-2.5">
-                VERIFICATION CODE
-              </label>
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="6-digit code"
-                  maxLength={6}
-                  required
-                  className="flex-1 px-5 py-3.5 rounded-xl border-2 border-ink bg-white text-ink placeholder:text-ink-lighter
-                             focus:outline-none focus:ring-4 focus:ring-ink/10 transition-all text-base"
-                />
-                <button
-                  type="button"
-                  onClick={handleSendCode}
-                  disabled={loading}
-                  className="px-5 py-3.5 rounded-xl border-2 border-ink text-ink text-sm font-semibold tracking-wide
-                             hover:bg-ink hover:text-white transition-all duration-200 disabled:opacity-40 whitespace-nowrap"
-                >
-                  {codeSent ? 'RESEND' : 'SEND CODE'}
-                </button>
+    <>
+      <BgOrbs />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-lg px-4">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
+                <MessageCircle className="w-4 h-4 text-white" />
               </div>
-            </div>
+              <span className="text-lg font-bold text-text tracking-tight">InfiniteChat</span>
+            </Link>
+            <h1 className="text-2xl font-bold text-text">Create account</h1>
+            <p className="text-text-secondary mt-1.5 text-sm">Join InfiniteChat and start connecting</p>
+          </div>
 
-            {error && (
-              <div className="bg-red-50 border-2 border-red-400 rounded-xl px-4 py-3">
-                <p className="text-red-600 text-sm font-medium">{error}</p>
+          {/* Card */}
+          <div className="bg-surface rounded-2xl shadow-card hover:shadow-card-hover transition-shadow duration-300 p-6 sm:p-8">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email */}
+              <div>
+                <label htmlFor="reg-email" className="block text-xs font-semibold text-text-secondary mb-1.5">
+                  Email address
+                </label>
+                <div className="flex items-center border border-border rounded-xl bg-surface focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                  <span className="pl-4 pr-2 text-text-muted shrink-0">
+                    <Mail className="w-4 h-4" />
+                  </span>
+                  <input
+                    id="reg-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="flex-1 py-3 pr-4 bg-transparent border-0 outline-none text-sm text-text placeholder:text-text-muted"
+                    placeholder="Enter your email"
+                  />
+                </div>
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 bg-ink text-white rounded-xl font-bold text-base tracking-wider
-                         hover:opacity-90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40"
-            >
-              {loading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
-            </button>
-          </form>
+              {/* Password */}
+              <div>
+                <label htmlFor="reg-password" className="block text-xs font-semibold text-text-secondary mb-1.5">
+                  Password
+                </label>
+                <div className="flex items-center border border-border rounded-xl bg-surface focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                  <span className="pl-4 pr-2 text-text-muted shrink-0">
+                    <Lock className="w-4 h-4" />
+                  </span>
+                  <input
+                    id="reg-password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className="flex-1 py-3 pr-4 bg-transparent border-0 outline-none text-sm text-text placeholder:text-text-muted"
+                    placeholder="At least 6 characters"
+                  />
+                </div>
+              </div>
+
+              {/* Code */}
+              <div>
+                <label htmlFor="reg-code" className="block text-xs font-semibold text-text-secondary mb-1.5">
+                  Verification code
+                </label>
+                <div className="flex gap-2">
+                  <div className="flex items-center flex-1 border border-border rounded-xl bg-surface focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                    <span className="pl-4 pr-2 text-text-muted shrink-0">
+                      <Key className="w-4 h-4" />
+                    </span>
+                    <input
+                      id="reg-code"
+                      type="text"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      maxLength={6}
+                      required
+                      className="flex-1 py-3 pr-4 bg-transparent border-0 outline-none text-sm text-text placeholder:text-text-muted"
+                      placeholder="6-digit code"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSendCode}
+                    disabled={loading}
+                    className="shrink-0 px-4 py-3 rounded-xl bg-primary-bg text-primary text-sm font-semibold
+                               hover:bg-primary/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {codeSent ? 'Resend' : 'Send Code'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Error */}
+              {error && (
+                <div className="flex items-start gap-2 bg-error-bg border border-error/20 rounded-xl px-4 py-3">
+                  <AlertCircle className="w-4 h-4 text-error shrink-0 mt-0.5" />
+                  <p className="text-error text-sm font-medium">{error}</p>
+                </div>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-primary text-white rounded-xl font-semibold text-sm
+                           hover:bg-primary-dark hover:shadow-elevated active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  'Create Account'
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Footer */}
+          <p className="text-center text-text-muted mt-6 text-sm">
+            Already have an account?{' '}
+            <Link to="/login" className="text-primary font-semibold hover:text-primary-dark transition-colors">
+              Sign in &rarr;
+            </Link>
+          </p>
         </div>
-
-        <p className="text-center text-ink-lighter mt-8 text-sm">
-          Already have an account?{' '}
-          <Link to="/login" className="text-ink font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity">
-            Sign in &rarr;
-          </Link>
-        </p>
       </div>
-    </div>
+    </>
   );
 }

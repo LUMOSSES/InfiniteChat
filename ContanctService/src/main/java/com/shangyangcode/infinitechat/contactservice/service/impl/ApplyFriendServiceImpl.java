@@ -15,6 +15,7 @@ import com.shangyangcode.infinitechat.contactservice.data.AddFriend.AddFriendRes
 import com.shangyangcode.infinitechat.contactservice.data.AddFriend.FriendApplicationNotification;
 import com.shangyangcode.infinitechat.contactservice.data.ApplyList.ApplyListRequest;
 import com.shangyangcode.infinitechat.contactservice.data.ApplyList.ApplyListResponse;
+import com.shangyangcode.infinitechat.contactservice.data.ApplyList.FriendApplicationDTO;
 import com.shangyangcode.infinitechat.contactservice.data.ApplyList.applyFriend;
 import com.shangyangcode.infinitechat.contactservice.data.ModifyApply.ModifyApplyRequest;
 import com.shangyangcode.infinitechat.contactservice.data.ModifyApply.ModifyApplyResponse;
@@ -283,5 +284,54 @@ public class ApplyFriendServiceImpl extends ServiceImpl<ApplyFriendMapper, Apply
         applyFriendMapper.update(null,updateWrapper);
 
         return null;
+    }
+
+    @Override
+    public List<FriendApplicationDTO> getApplyList(String userUuid) {
+        QueryWrapper<ApplyFriend> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("target_id", Long.valueOf(userUuid))
+                .orderByDesc("created_at");
+
+        List<ApplyFriend> applyFriends = this.list(queryWrapper);
+        List<FriendApplicationDTO> result = new ArrayList<>();
+        for (ApplyFriend af : applyFriends) {
+            result.add(new FriendApplicationDTO()
+                    .setId(String.valueOf(af.getId()))
+                    .setUserId(String.valueOf(af.getUserId()))
+                    .setTargetId(String.valueOf(af.getTargetId()))
+                    .setMsg(af.getMsg())
+                    .setStatus(af.getStatus())
+                    .setCreatedAt(af.getCreatedAt() != null ? af.getCreatedAt().toString() : null));
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public void acceptApply(String userUuid, String applyId) throws Exception {
+        ApplyFriend applyFriend = this.getById(Long.valueOf(applyId));
+        if (applyFriend == null) {
+            throw new ServiceException("申请不存在");
+        }
+        if (!applyFriend.getTargetId().equals(Long.valueOf(userUuid))) {
+            throw new ServiceException("无权操作该申请");
+        }
+        applyFriend.setStatus(FriendApplicationStatus.ACCEPTED.getCode());
+        this.updateById(applyFriend);
+
+        friendService.addFriend(Long.valueOf(applyFriend.getUserId()), Long.valueOf(userUuid));
+    }
+
+    @Override
+    public void rejectApply(String userUuid, String applyId) {
+        ApplyFriend applyFriend = this.getById(Long.valueOf(applyId));
+        if (applyFriend == null) {
+            throw new ServiceException("申请不存在");
+        }
+        if (!applyFriend.getTargetId().equals(Long.valueOf(userUuid))) {
+            throw new ServiceException("无权操作该申请");
+        }
+        applyFriend.setStatus(FriendApplicationStatus.REJECTED.getCode());
+        this.updateById(applyFriend);
     }
 }

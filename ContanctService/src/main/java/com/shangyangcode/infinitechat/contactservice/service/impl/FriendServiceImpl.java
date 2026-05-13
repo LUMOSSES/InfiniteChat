@@ -15,6 +15,7 @@ import com.shangyangcode.infinitechat.contactservice.data.DeleteFriend.DeleteFri
 import com.shangyangcode.infinitechat.contactservice.data.FriendDetail.FriendDetailRequest;
 import com.shangyangcode.infinitechat.contactservice.data.FriendDetail.FriendDetailResponse;
 import com.shangyangcode.infinitechat.contactservice.data.ModifyApply.ModifyApplyResponse;
+import com.shangyangcode.infinitechat.contactservice.data.SearchUser.SearchByKeywordRequest;
 import com.shangyangcode.infinitechat.contactservice.data.SearchUser.SearchUserRequest;
 import com.shangyangcode.infinitechat.contactservice.data.SearchUser.SearchUserResponse;
 import com.shangyangcode.infinitechat.contactservice.data.dto.push.NewSessionNotification;
@@ -70,8 +71,8 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend> impleme
         validateFriendUser(user);
 
         SearchUserResponse response = new SearchUserResponse()
-            .setUserUuid(String.valueOf(user.getUserId()))
-            .setNickname(user.getUserName())
+            .setUserId(String.valueOf(user.getUserId()))
+            .setUserName(user.getUserName())
             .setAvatar(user.getAvatar())
             .setEmail(user.getEmail())
             .setPhone(user.getPhone())
@@ -80,7 +81,7 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend> impleme
 
         populateSessionId(Long.valueOf(request.getUserUuid()), user.getUserId(), response);
         response.setStatus(populateFriendStatus(Long.valueOf(request.getUserUuid()), user.getUserId()));
-//这两行是在告诉前端“我和被搜索用户目前是什么关系、是否已有聊天会话”，方便前端决定显示“加好友”还是“直接聊天”。
+//这两行是在告诉前端"我和被搜索用户目前是什么关系、是否已有聊天会话"，方便前端决定显示"加好友"还是"直接聊天"。
         return response;
     }
 
@@ -124,7 +125,65 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend> impleme
 
 
     @Override
-    @Transactional//把一个方法里的多次数据库操作当成一个“整体事务”执行，要么全部成功，要么全部失败，保证数据一致性。
+    public List<SearchUserResponse> searchByKeyword(SearchByKeywordRequest request) {
+        String keyword = request.getKeyword();
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("email", keyword)
+                .or().like("user_name", keyword)
+                .or().like("phone", keyword);
+
+        List<User> users = userService.list(queryWrapper);
+
+        List<SearchUserResponse> results = new ArrayList<>();
+        for (User user : users) {
+            validateFriendUser(user);
+            SearchUserResponse response = new SearchUserResponse()
+                .setUserId(String.valueOf(user.getUserId()))
+                .setUserName(user.getUserName())
+                .setAvatar(user.getAvatar())
+                .setEmail(user.getEmail())
+                .setPhone(user.getPhone())
+                .setSignature(user.getSignature())
+                .setGender(user.getGender());
+            populateSessionId(Long.valueOf(request.getUserUuid()), user.getUserId(), response);
+            response.setStatus(populateFriendStatus(Long.valueOf(request.getUserUuid()), user.getUserId()));
+            results.add(response);
+        }
+        return results;
+    }
+
+    @Override
+    public List<SearchUserResponse> getFriendList(String userUuid) {
+        QueryWrapper<Friend> friendQuery = new QueryWrapper<>();
+        friendQuery.eq("user_id", Long.valueOf(userUuid))
+                .eq("status", FriendServiceConstants.FRIEND_STATUS_ACTIVE);
+        List<Friend> friendRecords = this.list(friendQuery);
+
+        List<SearchUserResponse> results = new ArrayList<>();
+        for (Friend f : friendRecords) {
+            User friendUser = userService.getById(f.getFriendId());
+            if (friendUser == null) continue;
+            SearchUserResponse response = new SearchUserResponse()
+                .setUserId(String.valueOf(friendUser.getUserId()))
+                .setUserName(friendUser.getUserName())
+                .setAvatar(friendUser.getAvatar())
+                .setEmail(friendUser.getEmail())
+                .setPhone(friendUser.getPhone())
+                .setSignature(friendUser.getSignature())
+                .setGender(friendUser.getGender());
+            populateSessionId(Long.valueOf(userUuid), friendUser.getUserId(), response);
+            response.setStatus(populateFriendStatus(Long.valueOf(userUuid), friendUser.getUserId()));
+            results.add(response);
+        }
+        return results;
+    }
+
+    @Override
+    @Transactional//把一个方法里的多次数据库操作当成一个"整体事务"执行，要么全部成功，要么全部失败，保证数据一致性。
     public DeleteFriendResponse deleteFriend(DeleteFriendRequest request){
     //删除好友接口，接收一个DeleteFriendRequest对象，包含发起删除好友请求的用户UUID和被删除好友的UUID。
         Long userId = request.getUserUuid();
@@ -316,8 +375,8 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend> impleme
         validateFriendUser(friendUser);
 
         FriendDetailResponse response = new FriendDetailResponse();
-        response.setUserUuid(String.valueOf(friendUser.getUserId()))
-            .setNickname(friendUser.getUserName())
+        response.setUserId(String.valueOf(friendUser.getUserId()))
+            .setUserName(friendUser.getUserName())
             .setAvatar(friendUser.getAvatar())
             .setEmail(friendUser.getEmail())
             .setPhone(friendUser.getPhone())

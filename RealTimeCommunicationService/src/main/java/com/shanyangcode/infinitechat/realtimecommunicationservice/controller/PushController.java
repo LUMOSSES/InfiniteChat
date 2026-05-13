@@ -6,9 +6,14 @@ import com.shanyangcode.infinitechat.realtimecommunicationservice.data.PushMomen
 import com.shanyangcode.infinitechat.realtimecommunicationservice.data.PushMoment.NewSessionNotification;
 import com.shanyangcode.infinitechat.realtimecommunicationservice.data.PushMoment.PushMomentRequest;
 import com.shanyangcode.infinitechat.realtimecommunicationservice.service.impl.NettyMessageService;
+import com.shanyangcode.infinitechat.realtimecommunicationservice.websocket.ChannelManager;
+import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -17,6 +22,15 @@ public class PushController {
 
     @Autowired
     private NettyMessageService nettyMessageService;
+
+    @GetMapping("/online/{userId}")
+    public Result<Map<String, Boolean>> checkOnline(@PathVariable String userId) {
+        Channel channel = ChannelManager.getChannelByUserId(userId);
+        boolean online = channel != null && channel.isActive();
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("online", online);
+        return Result.OK(result);
+    }
 
     @PostMapping("/moment")
     public Result<?> receiveNoticeMoment(@RequestBody PushMomentRequest request){

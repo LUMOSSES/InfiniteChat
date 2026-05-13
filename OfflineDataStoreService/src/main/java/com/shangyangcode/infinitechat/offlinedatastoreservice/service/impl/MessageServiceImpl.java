@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.shangyangcode.infinitechat.offlinedatastoreservice.common.TextMessage;
+import com.shangyangcode.infinitechat.offlinedatastoreservice.common.TextMessageBody;
 import com.shangyangcode.infinitechat.offlinedatastoreservice.constants.config.ConfigEnum;
 import com.shangyangcode.infinitechat.offlinedatastoreservice.data.offlineMessage.*;
 import com.shangyangcode.infinitechat.offlinedatastoreservice.mapper.MessageMapper;
@@ -145,13 +146,22 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     }
 
     public void saveOfflineMessage(String message) {
-        TextMessage textMessage = JSONUtil.toBean(message, TextMessage.class);
+        cn.hutool.json.JSONObject json = JSONUtil.parseObj(message);
         Message msg = new Message();
-        BeanUtil.copyProperties(textMessage, msg);
+        msg.setMessageId(json.getLong("messageId"));
+        msg.setSessionId(json.getLong("sessionId"));
+        msg.setSenderId(json.getLong("sendUserId"));
+        msg.setType(json.getInt("type"));
+        msg.setSessionType(json.getInt("sessionType"));
 
-        msg.setContent(textMessage.getBody().getContent());
-        msg.setReplyId(textMessage.getBody().getReplyId());
-        msg.setSenderId(textMessage.getSendUserId());
+        Object body = json.get("body");
+        if (body instanceof String) {
+            msg.setContent((String) body);
+        } else if (body instanceof cn.hutool.json.JSONObject) {
+            cn.hutool.json.JSONObject bodyObj = (cn.hutool.json.JSONObject) body;
+            msg.setContent(bodyObj.getStr("content"));
+            msg.setReplyId(bodyObj.getLong("replyId"));
+        }
 
         int insert = this.baseMapper.insert(msg);
 

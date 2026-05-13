@@ -6,9 +6,9 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class SearchUserResponse {
-    private String userUuid;
+    private String userId;
 
-    private String nickname;
+    private String userName;
 
     private String avatar;
 

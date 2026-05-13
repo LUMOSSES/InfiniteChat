@@ -2,9 +2,14 @@ import api from './client';
 import type { ApiResult } from '../types';
 
 export const messageApi = {
+  checkOnline: (userId: string) =>
+    api.get<ApiResult<{ online: boolean }>>('/v1/message/push/online/' + userId),
+
   sendMessage: (data: {
     sessionId: string;
-    content: string;
+    sendUserId: string;
+    receiveUserId: string;
+    body: string;
     type?: number;
     sessionType?: number;
   }) => api.post<ApiResult<{ messageId: string }>>('/v1/chat/session', data),

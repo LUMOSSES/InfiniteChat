@@ -90,6 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         LoginResponse response = new LoginResponse();
         BeanUtils.copyProperties(user, response);
+        response.setUserId(String.valueOf(user.getUserId()));
         String token = JwtUtil.generate(String.valueOf(user.getUserId()));
         response.setToken(token);
         return response;

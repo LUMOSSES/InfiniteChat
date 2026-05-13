@@ -3,8 +3,11 @@ package com.shangyangcode.infinitechat.contactservice.controller;
 import com.shangyangcode.infinitechat.contactservice.common.Result;
 import com.shangyangcode.infinitechat.contactservice.data.AddFriend.AddFriendRequest;
 import com.shangyangcode.infinitechat.contactservice.data.AddFriend.AddFriendResponse;
+import com.shangyangcode.infinitechat.contactservice.data.AddFriend.FriendApplyActionRequest;
+import com.shangyangcode.infinitechat.contactservice.data.AddFriend.FriendApplyRequest;
 import com.shangyangcode.infinitechat.contactservice.data.ApplyList.ApplyListRequest;
 import com.shangyangcode.infinitechat.contactservice.data.ApplyList.ApplyListResponse;
+import com.shangyangcode.infinitechat.contactservice.data.ApplyList.FriendApplicationDTO;
 import com.shangyangcode.infinitechat.contactservice.data.BlockFriend.BlockFriendRequest;
 import com.shangyangcode.infinitechat.contactservice.data.BlockFriend.BlockFriendResponse;
 import com.shangyangcode.infinitechat.contactservice.data.CreateGroup.CreateGroupRequest;
@@ -23,6 +26,7 @@ import com.shangyangcode.infinitechat.contactservice.data.KickGroup.KickGroupMem
 import com.shangyangcode.infinitechat.contactservice.data.KickGroup.KickGroupMembersResponse;
 import com.shangyangcode.infinitechat.contactservice.data.ModifyApply.ModifyApplyRequest;
 import com.shangyangcode.infinitechat.contactservice.data.ModifyApply.ModifyApplyResponse;
+import com.shangyangcode.infinitechat.contactservice.data.SearchUser.SearchByKeywordRequest;
 import com.shangyangcode.infinitechat.contactservice.data.SearchUser.SearchUserRequest;
 import com.shangyangcode.infinitechat.contactservice.data.SearchUser.SearchUserResponse;
 import com.shangyangcode.infinitechat.contactservice.data.UnreadApply.UnreadApplyRequest;
@@ -34,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/contact")
@@ -74,6 +79,20 @@ public class ContactController {
         return Result.OK(response);
     }
 
+    @GetMapping("/search")//根据关键词搜索用户
+    public Result<List<SearchUserResponse>> searchByKeyword(@Valid @ModelAttribute SearchByKeywordRequest request){
+        List<SearchUserResponse> response = friendService.searchByKeyword(request);
+
+        return Result.OK(response);
+    }
+
+    @GetMapping("/friend/list")//获取好友列表
+    public Result<List<SearchUserResponse>> getFriendList(@NotNull(message = "用户ID不能为空") @RequestParam String userUuid){
+        List<SearchUserResponse> response = friendService.getFriendList(userUuid);
+
+        return Result.OK(response);
+    }
+
     @PostMapping("/{userUuid}/friend/{receiveUserUuid}")
     //添加好友接口，接收一个AddFriendRequest对象，包含发起添加好友请求的用户UUID、被添加好友的UUID以及其他相关信息。
     public Result<AddFriendResponse> addFriend(
@@ -85,6 +104,31 @@ public class ContactController {
         AddFriendResponse response = applyFriendService.addFriend(userUuid, receiveUserUuid, request);
 
         return Result.OK(response);
+    }
+
+    @PostMapping("/friend/apply")
+    public Result<AddFriendResponse> applyFriend(@Valid @RequestBody FriendApplyRequest request) throws Exception {
+        AddFriendResponse response = applyFriendService.addFriend(request.getUserUuid(), request.getTargetId(),
+                new AddFriendRequest().setMsg(request.getMsg()));
+        return Result.OK(response);
+    }
+
+    @GetMapping("/friend/apply/list")
+    public Result<List<FriendApplicationDTO>> getApplyList(@NotNull(message = "用户ID不能为空") @RequestParam String userUuid) {
+        List<FriendApplicationDTO> response = applyFriendService.getApplyList(userUuid);
+        return Result.OK(response);
+    }
+
+    @PostMapping("/friend/apply/accept")
+    public Result<?> acceptApply(@Valid @RequestBody FriendApplyActionRequest request) throws Exception {
+        applyFriendService.acceptApply(request.getUserUuid(), request.getApplyId());
+        return Result.OK(null);
+    }
+
+    @PostMapping("/friend/apply/reject")
+    public Result<?> rejectApply(@Valid @RequestBody FriendApplyActionRequest request) {
+        applyFriendService.rejectApply(request.getUserUuid(), request.getApplyId());
+        return Result.OK(null);
     }
 
     @GetMapping("/{userUuid}/applyCount")//获取未读好友申请数量接口，接收一个UnreadApplyRequest对象，包含用户UUID。

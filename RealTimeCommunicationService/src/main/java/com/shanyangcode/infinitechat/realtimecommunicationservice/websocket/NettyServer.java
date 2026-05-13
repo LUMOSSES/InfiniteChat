@@ -13,10 +13,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.Future;
@@ -97,10 +95,8 @@ public class NettyServer {
 
                         pipeline.addLast(new IdleStateHandler(5 * 60, 0, 0));
                         pipeline.addLast(new HttpServerCodec());
-                        pipeline.addLast(new ChunkedWriteHandler());
-                        pipeline.addLast(new HttpObjectAggregator(8192));
-                        pipeline.addLast(new WebSocketTokenAuthHeader());
-                        pipeline.addLast(new WebSocketServerProtocolHandler("/api/v1/netty"));
+                        pipeline.addLast(new HttpObjectAggregator(65536));
+                        pipeline.addLast(new WebSocketHandshakeHandler("/api/v1/netty"));
                         pipeline.addLast(new MessageInboundHandler(redisTemplate));
                     }
                 });

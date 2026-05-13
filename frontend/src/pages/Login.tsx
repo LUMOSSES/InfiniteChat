@@ -2,14 +2,29 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { authApi } from '../api/auth';
+import { Mail, Lock, AlertCircle, Loader2, MessageCircle } from 'lucide-react';
 import type { AxiosError } from 'axios';
 
 function getErrorMessage(err: unknown): string {
   if (err && typeof err === 'object' && 'response' in err) {
-    const axiosErr = err as AxiosError<{ msg?: string }>;
-    return axiosErr.response?.data?.msg || axiosErr.message;
+    const axiosErr = err as AxiosError<{ msg?: string; code?: number }>;
+    const body = axiosErr.response?.data;
+    if (body?.msg) return body.msg;
+    if (body?.code) return `Error ${body.code}`;
+    return axiosErr.message;
   }
   return err instanceof Error ? err.message : 'Something went wrong';
+}
+
+/* Floating background orbs — subtle decoration */
+function BgOrbs() {
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+      <div className="absolute top-[15%] left-[10%] w-64 h-64 rounded-full bg-primary/5 blur-3xl" />
+      <div className="absolute bottom-[20%] right-[8%] w-80 h-80 rounded-full bg-primary/5 blur-3xl" />
+      <div className="absolute top-[60%] left-[60%] w-48 h-48 rounded-full bg-indigo-400/5 blur-3xl" />
+    </div>
+  );
 }
 
 export default function Login() {
@@ -56,124 +71,162 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center bg-cream px-6">
-      <div className="w-full max-w-lg">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-ink tracking-tight">InfiniteChat</h1>
-          <p className="text-ink-lighter mt-2 text-base">Sign in to continue</p>
-        </div>
-
-        <div className="bg-white border-2 border-ink rounded-3xl p-10 shadow-none">
-          {/* Mode toggle */}
-          <div className="grid grid-cols-2 gap-0 border-2 border-ink rounded-xl overflow-hidden mb-8">
-            <button
-              type="button"
-              onClick={() => setMode('password')}
-              className={`py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
-                mode === 'password'
-                  ? 'bg-ink text-white'
-                  : 'bg-white text-ink-light hover:bg-cream'
-              }`}
-            >
-              PASSWORD
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode('code')}
-              className={`py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
-                mode === 'code'
-                  ? 'bg-ink text-white'
-                  : 'bg-white text-ink-light hover:bg-cream'
-              }`}
-            >
-              VERIFY CODE
-            </button>
+    <>
+      <BgOrbs />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-lg px-4">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <Link to="/" className="inline-flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
+                <MessageCircle className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-lg font-bold text-text tracking-tight">InfiniteChat</span>
+            </Link>
+            <h1 className="text-2xl font-bold text-text">Welcome back</h1>
+            <p className="text-text-secondary mt-1.5 text-sm">Sign in to continue</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-xs font-bold text-ink tracking-[0.15em] mb-2.5">
-                EMAIL ADDRESS
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                className="w-full px-5 py-3.5 rounded-xl border-2 border-ink bg-white text-ink placeholder:text-ink-lighter
-                           focus:outline-none focus:ring-4 focus:ring-ink/10 transition-all text-base"
-              />
+          {/* Card */}
+          <div className="bg-surface rounded-2xl shadow-card hover:shadow-card-hover transition-shadow duration-300 p-6 sm:p-8">
+            {/* Mode tabs */}
+            <div className="flex border-b border-border mb-6">
+              <button
+                type="button"
+                onClick={() => { setMode('password'); setError(''); }}
+                className={`flex-1 pb-3 text-sm font-semibold transition-all border-b-2 ${
+                  mode === 'password'
+                    ? 'text-primary border-primary'
+                    : 'text-text-muted border-transparent hover:text-text-secondary'
+                }`}
+              >
+                Password login
+              </button>
+              <button
+                type="button"
+                onClick={() => { setMode('code'); setError(''); }}
+                className={`flex-1 pb-3 text-sm font-semibold transition-all border-b-2 ${
+                  mode === 'code'
+                    ? 'text-primary border-primary'
+                    : 'text-text-muted border-transparent hover:text-text-secondary'
+                }`}
+              >
+                Code login
+              </button>
             </div>
 
-            {mode === 'password' ? (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email — icon OUTSIDE input */}
               <div>
-                <label className="block text-xs font-bold text-ink tracking-[0.15em] mb-2.5">
-                  PASSWORD
+                <label htmlFor="login-email" className="block text-xs font-semibold text-text-secondary mb-1.5">
+                  Email address
                 </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                  className="w-full px-5 py-3.5 rounded-xl border-2 border-ink bg-white text-ink placeholder:text-ink-lighter
-                             focus:outline-none focus:ring-4 focus:ring-ink/10 transition-all text-base"
-                />
-              </div>
-            ) : (
-              <div>
-                <label className="block text-xs font-bold text-ink tracking-[0.15em] mb-2.5">
-                  VERIFICATION CODE
-                </label>
-                <div className="flex gap-3">
+                <div className="flex items-center border border-border rounded-xl bg-surface focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                  <span className="pl-4 pr-2 text-text-muted shrink-0">
+                    <Mail className="w-4 h-4" />
+                  </span>
                   <input
-                    type="text"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    placeholder="6-digit code"
-                    maxLength={6}
+                    id="login-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="flex-1 px-5 py-3.5 rounded-xl border-2 border-ink bg-white text-ink placeholder:text-ink-lighter
-                               focus:outline-none focus:ring-4 focus:ring-ink/10 transition-all text-base"
+                    className="flex-1 py-3 pr-4 bg-transparent border-0 outline-none text-sm text-text placeholder:text-text-muted"
+                    placeholder="Enter your email"
                   />
-                  <button
-                    type="button"
-                    onClick={handleSendCode}
-                    disabled={loading}
-                    className="px-5 py-3.5 rounded-xl border-2 border-ink text-ink text-sm font-semibold tracking-wide
-                               hover:bg-ink hover:text-white transition-all duration-200 disabled:opacity-40 whitespace-nowrap"
-                  >
-                    {codeSent ? 'RESEND' : 'SEND CODE'}
-                  </button>
                 </div>
               </div>
-            )}
 
-            {error && (
-              <div className="bg-red-50 border-2 border-red-400 rounded-xl px-4 py-3">
-                <p className="text-red-600 text-sm font-medium">{error}</p>
-              </div>
-            )}
+              {/* Password field */}
+              {mode === 'password' && (
+                <div>
+                  <label htmlFor="login-password" className="block text-xs font-semibold text-text-secondary mb-1.5">
+                    Password
+                  </label>
+                  <div className="flex items-center border border-border rounded-xl bg-surface focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                    <span className="pl-4 pr-2 text-text-muted shrink-0">
+                      <Lock className="w-4 h-4" />
+                    </span>
+                    <input
+                      id="login-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="flex-1 py-3 pr-4 bg-transparent border-0 outline-none text-sm text-text placeholder:text-text-muted"
+                      placeholder="Enter your password"
+                    />
+                  </div>
+                </div>
+              )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 bg-ink text-white rounded-xl font-bold text-base tracking-wider
-                         hover:opacity-90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40"
-            >
-              {loading ? 'PLEASE WAIT...' : 'SIGN IN'}
-            </button>
-          </form>
+              {/* Code field */}
+              {mode === 'code' && (
+                <div>
+                  <label htmlFor="login-code" className="block text-xs font-semibold text-text-secondary mb-1.5">
+                    Verification code
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      id="login-code"
+                      type="text"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      maxLength={6}
+                      required
+                      className="flex-1 px-4 py-3 rounded-xl border border-border bg-surface text-sm text-text placeholder:text-text-muted
+                                 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                      placeholder="6-digit code"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSendCode}
+                      disabled={loading}
+                      className="shrink-0 px-4 py-3 rounded-xl bg-primary-bg text-primary text-sm font-semibold
+                                 hover:bg-primary/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {codeSent ? 'Resend' : 'Send Code'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Error */}
+              {error && (
+                <div className="flex items-start gap-2 bg-error-bg border border-error/20 rounded-xl px-4 py-3">
+                  <AlertCircle className="w-4 h-4 text-error shrink-0 mt-0.5" />
+                  <p className="text-error text-sm font-medium">{error}</p>
+                </div>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-primary text-white rounded-xl font-semibold text-sm
+                           hover:bg-primary-dark hover:shadow-elevated active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Footer */}
+          <p className="text-center text-text-muted mt-6 text-sm">
+            Don&apos;t have an account?{' '}
+            <Link to="/register" className="text-primary font-semibold hover:text-primary-dark transition-colors">
+              Create one &rarr;
+            </Link>
+          </p>
         </div>
-
-        <p className="text-center text-ink-lighter mt-8 text-sm">
-          Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-ink font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity">
-            Create one &rarr;
-          </Link>
-        </p>
       </div>
-    </div>
+    </>
   );
 }

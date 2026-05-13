@@ -36,21 +36,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await authApi.login({ email, password });
-    const { token, ...userData } = res.data.data;
+    if (res.data.code !== 200) throw new Error(res.data.msg || `Login failed (code ${res.data.code})`);
+    const { token, ...userData } = res.data.data!;
     saveAuth(token, userData);
   }, [saveAuth]);
 
   const loginCode = useCallback(async (email: string, code: string) => {
     const res = await authApi.loginCode({ email, code });
-    const { token, ...userData } = res.data.data;
+    if (res.data.code !== 200) throw new Error(res.data.msg || `Login failed (code ${res.data.code})`);
+    const { token, ...userData } = res.data.data!;
     saveAuth(token, userData);
   }, [saveAuth]);
 
   const register = useCallback(async (email: string, password: string, code: string) => {
     const res = await authApi.register({ email, password, code });
-    if (res.data.code === 200) {
-      await login(email, password);
-    }
+    if (res.data.code !== 200) throw new Error(res.data.msg || `Registration failed (code ${res.data.code})`);
+    await login(email, password);
   }, [login]);
 
   const logout = useCallback(() => {

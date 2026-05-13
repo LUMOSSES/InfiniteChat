@@ -127,6 +127,21 @@ public class MomentLikeServiceImpl extends ServiceImpl<MomentLikeMapper, MomentL
         return new DeleteLikeResponse().setMessage(MomentConstants.DELETE_LIKE_SUCCESS_MSG);
     }
 
+    @Override
+    public void unlikeMoment(Long momentId, Long userId) {
+        QueryWrapper<MomentLike> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("moment_id", momentId)
+                .eq("user_id", userId)
+                .eq("is_delete", 0);
+
+        MomentLike like = this.getOne(queryWrapper);
+        if (like == null) return;
+
+        like.setIsDelete(MomentConstants.DELETED);
+        like.setUpdateTime(new Date());
+        this.updateById(like);
+    }
+
     /**
      * 创建点赞实体
      *

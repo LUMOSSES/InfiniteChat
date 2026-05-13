@@ -5,16 +5,17 @@ interface WSMessage {
   data: unknown;
 }
 
-export function useWebSocket(token: string) {
+export function useWebSocket(token: string, userId: string) {
   const wsRef = useRef<WebSocket | null>(null);
   const [connected, setConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState<WSMessage | null>(null);
-  const reconnectTimer = useRef<ReturnType<typeof setTimeout>>();
+  const reconnectTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const connect = useCallback(() => {
-    if (!token) return;
+    if (!token || !userId) return;
     try {
-      const ws = new WebSocket(`ws://127.0.0.1:9100/api/v1/netty?token=${token}`);
+      const params = new URLSearchParams({ token, userUuid: userId });
+      const ws = new WebSocket(`ws://127.0.0.1:9100/api/v1/netty?${params}`);
       wsRef.current = ws;
 
       ws.onopen = () => {
@@ -43,7 +44,7 @@ export function useWebSocket(token: string) {
       // retry
       reconnectTimer.current = setTimeout(connect, 3000);
     }
-  }, [token]);
+  }, [token, userId]);
 
   useEffect(() => {
     connect();

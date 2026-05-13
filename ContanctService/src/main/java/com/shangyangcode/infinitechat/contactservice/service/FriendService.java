@@ -12,10 +12,16 @@ import com.shangyangcode.infinitechat.contactservice.data.SearchUser.SearchUserR
 import com.shangyangcode.infinitechat.contactservice.data.SearchUser.SearchUserResponse;
 import com.shangyangcode.infinitechat.contactservice.model.Friend;
 
+import com.shangyangcode.infinitechat.contactservice.data.SearchUser.SearchByKeywordRequest;
+
 import java.util.List;
 
 public interface FriendService extends IService<Friend> {
     SearchUserResponse searchUser(SearchUserRequest request);
+
+    List<SearchUserResponse> searchByKeyword(SearchByKeywordRequest request);
+
+    List<SearchUserResponse> getFriendList(String userUuid);
 
     DeleteFriendResponse deleteFriend(DeleteFriendRequest request);
 

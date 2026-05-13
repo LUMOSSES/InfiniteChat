@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { Monitor, FileText, Copy, Loader2, Sparkles, ArrowRight, Check } from 'lucide-react';
 
 const STYLE_PRESETS = ['Minimalist','Brutalist','Retro Cream','Dark Mode','Cyberpunk','Glassmorphism','Swiss Style'];
 
@@ -25,83 +26,161 @@ export default function Generator() {
   };
 
   return (
-    <div className="py-10">
-      <h1 className="text-3xl font-bold text-ink mb-8 text-center">Template Generator</h1>
+    <div className="py-6 md:py-10">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold text-text">Template Generator</h1>
+        <p className="text-text-secondary text-sm mt-1.5">Design message templates for any scenario</p>
+      </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 justify-center">
-        {/* LEFT */}
+      <div className="flex flex-col lg:flex-row gap-6 justify-center">
+        {/* Left: Form */}
         <div className="flex-1 max-w-lg">
-          <div className="bg-cream border-2 border-ink rounded-2xl p-8">
-            <h2 className="text-lg font-bold text-ink flex items-center gap-2 mb-8 tracking-wide">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
-              DESIGN BRIEF
-            </h2>
-            <form onSubmit={handleGenerate} className="space-y-6">
+          <div className="bg-surface rounded-2xl shadow-card p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-8 h-8 rounded-lg bg-primary-bg flex items-center justify-center">
+                <Monitor className="w-4 h-4 text-primary" />
+              </div>
+              <h2 className="text-sm font-semibold text-text">Design Brief</h2>
+            </div>
+
+            <form onSubmit={handleGenerate} className="space-y-5">
+              {/* Scenario */}
               <div>
-                <label className="block text-xs font-bold text-ink tracking-[0.15em] mb-2.5">1. SCENARIO / CONTEXT</label>
-                <textarea value={scenario} onChange={(e) => setScenario(e.target.value)}
+                <label className="block text-xs font-semibold text-text-secondary mb-1.5">
+                  1. Scenario / Context
+                </label>
+                <textarea
+                  value={scenario}
+                  onChange={(e) => setScenario(e.target.value)}
                   placeholder="e.g. A messaging app for team collaboration, supporting real-time chat and file sharing..."
-                  rows={4} className="w-full px-5 py-3.5 rounded-xl border-2 border-ink bg-white text-ink placeholder:text-ink-lighter focus:outline-none focus:ring-4 focus:ring-ink/10 transition-all text-base resize-none"/>
+                  rows={3}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-bg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-text-muted"
+                />
               </div>
+
+              {/* User Goal */}
               <div>
-                <label className="block text-xs font-bold text-ink tracking-[0.15em] mb-2.5">2. USER GOAL (OPTIONAL)</label>
-                <textarea value={userGoal} onChange={(e) => setUserGoal(e.target.value)}
+                <label className="block text-xs font-semibold text-text-secondary mb-1.5">
+                  2. User goal (optional)
+                </label>
+                <textarea
+                  value={userGoal}
+                  onChange={(e) => setUserGoal(e.target.value)}
                   placeholder="e.g. Help users organize group chats with tags, read receipts..."
-                  rows={3} className="w-full px-5 py-3.5 rounded-xl border-2 border-ink bg-white text-ink placeholder:text-ink-lighter focus:outline-none focus:ring-4 focus:ring-ink/10 transition-all text-base resize-none"/>
+                  rows={2}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-bg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-text-muted"
+                />
               </div>
+
+              {/* Style */}
               <div>
-                <div className="flex items-center justify-between mb-2.5">
-                  <label className="text-xs font-bold text-ink tracking-[0.15em]">3. VISUAL STYLE</label>
-                  <button type="button" className="text-xs font-semibold text-ink-light hover:text-ink underline underline-offset-4">Browse Gallery &rarr;</button>
-                </div>
-                <select value={style} onChange={(e) => setStyle(e.target.value)}
-                  className="w-full px-5 py-3.5 rounded-xl border-2 border-ink bg-white text-ink text-base focus:outline-none focus:ring-4 focus:ring-ink/10 transition-all appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iNyIgdmlld0JveD0iMCAwIDEyIDciIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWw1IDUgNS01IiBzdHJva2U9IiMxYTFhMWEiIHN0cm9rZS13aWR0aD0iMS41Ii8+PC9zdmc+')] bg-no-repeat bg-[right_1rem_center]">
+                <label className="block text-xs font-semibold text-text-secondary mb-1.5">
+                  3. Visual style
+                </label>
+                <select
+                  value={style}
+                  onChange={(e) => setStyle(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-bg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iNyIgdmlld0JveD0iMCAwIDEyIDciIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWw1IDUgNS01IiBzdHJva2U9IiM5NEEzQjgiIHN0cm9rZS13aWR0aD0iMS41Ii8+PC9zdmc+')] bg-no-repeat bg-[right_1rem_center]"
+                >
                   {STYLE_PRESETS.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <input type="text" value={customStyle} onChange={(e) => setCustomStyle(e.target.value)}
-                  placeholder="Or write your own style description here..."
-                  className="w-full mt-2.5 px-5 py-3.5 rounded-xl border-2 border-ink bg-white text-ink placeholder:text-ink-lighter focus:outline-none focus:ring-4 focus:ring-ink/10 transition-all text-base"/>
+                <input
+                  type="text"
+                  value={customStyle}
+                  onChange={(e) => setCustomStyle(e.target.value)}
+                  placeholder="Or write your own style description..."
+                  className="w-full mt-2 px-4 py-3 rounded-xl border border-border bg-bg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-text-muted"
+                />
               </div>
-              {error && <div className="bg-red-50 border-2 border-red-400 rounded-xl px-4 py-3"><p className="text-red-600 text-sm font-medium">{error}</p></div>}
-              <button type="submit" disabled={loading}
-                className="w-full py-4 bg-ink text-white rounded-xl font-bold text-base tracking-wider hover:opacity-90 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 disabled:opacity-40 flex items-center justify-center gap-3">
-                {loading ? <><svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="white" strokeWidth="3" strokeDasharray="32"/></svg> GENERATING...</>
-                : <>GENERATE MESSAGE TEMPLATE <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></>}
+
+              {/* Error */}
+              {error && (
+                <div className="bg-error-bg border border-error/20 rounded-xl px-4 py-3">
+                  <p className="text-error text-sm font-medium">{error}</p>
+                </div>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-primary text-white rounded-xl font-semibold text-sm
+                           hover:bg-primary-dark active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    Generate Message Template
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </form>
           </div>
         </div>
 
-        {/* RIGHT */}
+        {/* Right: Result */}
         <div className="flex-1 max-w-lg">
-          <div className="bg-cream border-2 border-ink rounded-2xl p-8 h-full flex flex-col min-h-[450px]">
-            <h2 className="text-lg font-bold text-ink flex items-center gap-2 mb-6 tracking-wide">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-              GENERATED TEMPLATE
-            </h2>
+          <div className="bg-surface rounded-2xl shadow-card p-6 h-full flex flex-col min-h-[400px]">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-8 h-8 rounded-lg bg-primary-bg flex items-center justify-center">
+                <FileText className="w-4 h-4 text-primary" />
+              </div>
+              <h2 className="text-sm font-semibold text-text">Generated Template</h2>
+            </div>
+
             <div className="flex-1 flex flex-col">
               {loading ? (
-                <div className="flex-1 flex flex-col items-center justify-center gap-4">
-                  <svg className="animate-spin h-8 w-8 text-ink-lighter" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeDasharray="32"/></svg>
-                  <p className="text-sm text-ink-lighter font-medium">Generating template...</p>
+                <div className="flex-1 flex flex-col items-center justify-center gap-3">
+                  <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                  <p className="text-sm text-text-muted font-medium">Generating template...</p>
                 </div>
               ) : !result ? (
-                <div className="flex-1 flex flex-col items-center justify-center gap-4">
-                  <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                  <p className="text-base text-ink-lighter text-center max-w-xs leading-relaxed">Fill in the details on the left and click generate to see your message template here.</p>
+                <div className="flex-1 flex flex-col items-center justify-center gap-3">
+                  <div className="w-14 h-14 rounded-2xl bg-bg-alt flex items-center justify-center">
+                    <FileText className="w-7 h-7 text-text-muted" />
+                  </div>
+                  <p className="text-sm text-text-muted text-center max-w-xs leading-relaxed">
+                    Fill in the details on the left and click generate to see your message template here.
+                  </p>
                 </div>
               ) : (
-                <div className="flex-1 overflow-y-auto"><pre className="text-sm text-ink font-mono whitespace-pre-wrap leading-relaxed">{result}</pre></div>
+                <div className="flex-1 overflow-y-auto">
+                  <pre className="text-sm text-text font-mono whitespace-pre-wrap leading-relaxed bg-bg rounded-xl p-4">{result}</pre>
+                </div>
               )}
             </div>
-            <div className="pt-5 mt-5 border-t-2 border-ink">
+
+            {/* Copy button */}
+            <div className="pt-4 mt-4 border-t border-border">
               {result && !loading ? (
-                <button onClick={async()=>{await navigator.clipboard.writeText(result);setCopied(true);setTimeout(()=>setCopied(false),2000)}}
-                  className="w-full py-3 border-2 border-ink text-ink rounded-xl text-sm font-bold tracking-wider hover:bg-ink hover:text-white transition-all">
-                  {copied ? 'COPIED!' : 'COPY TO CLIPBOARD'}
+                <button
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(result);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 border border-primary text-primary rounded-xl text-sm font-semibold hover:bg-primary-bg transition-all"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      Copy to Clipboard
+                    </>
+                  )}
                 </button>
               ) : (
-                <p className="text-center text-xs font-bold text-ink-lighter tracking-[0.2em]">READY TO USE IN YOUR CHAT APP</p>
+                <p className="text-center text-xs font-medium text-text-muted">Ready to use in your chat app</p>
               )}
             </div>
           </div>

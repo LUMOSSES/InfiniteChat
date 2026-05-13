@@ -15,6 +15,7 @@ import com.shanyangcode.infinitechat.momentservice.data.createMoment.CreateMomen
 import com.shanyangcode.infinitechat.momentservice.data.createMoment.CreateMomentResponse;
 import com.shanyangcode.infinitechat.momentservice.data.deleteMoment.DeleteMomentRequest;
 import com.shanyangcode.infinitechat.momentservice.data.deleteMoment.DeleteMomentResponse;
+import com.shanyangcode.infinitechat.momentservice.data.getMomentList.MomentListVO;
 import com.shanyangcode.infinitechat.momentservice.mapper.MomentMapper;
 import com.shanyangcode.infinitechat.momentservice.model.Moment;
 import com.shanyangcode.infinitechat.momentservice.model.MomentComment;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -186,4 +188,70 @@ public class MomentServiceImpl extends ServiceImpl<MomentMapper, Moment> impleme
         momentCommentService.remove(queryWrapper);
     }
 
+    @Override
+    public List<MomentListVO> getMomentList(Long userId, Integer page, Integer size) {
+        // 获取好友ID列表加上自己
+        List<Long> visibleUserIds = friendService.getFriendIds(userId);
+        visibleUserIds.add(userId);
+
+        // 查询朋友圈 — 按创建时间倒序
+        QueryWrapper<Moment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("user_id", visibleUserIds)
+                .isNull("delete_time")
+                .orderByDesc("create_time");
+
+        // 分页
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Moment> pageObj =
+                new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page, size);
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Moment> resultPage =
+                this.page(pageObj, queryWrapper);
+
+        List<MomentListVO> result = new ArrayList<>();
+        for (Moment moment : resultPage.getRecords()) {
+            MomentListVO vo = new MomentListVO();
+            vo.setMomentId(String.valueOf(moment.getMomentId()));
+            vo.setUserId(String.valueOf(moment.getUserId()));
+            vo.setText(moment.getText());
+            vo.setCreateTime(moment.getCreateTime() != null ? moment.getCreateTime().toString() : null);
+
+            // 解析 mediaUrl JSON 数组，取第一个
+            if (moment.getMediaUrl() != null && !moment.getMediaUrl().isEmpty()) {
+                try {
+                    String[] urls = gson.fromJson(moment.getMediaUrl(), String[].class);
+                    vo.setMediaUrl(urls != null && urls.length > 0 ? urls[0] : null);
+                } catch (Exception e) {
+                    vo.setMediaUrl(moment.getMediaUrl());
+                }
+            }
+
+            // 点赞数
+            QueryWrapper<MomentLike> likeCountQuery = new QueryWrapper<>();
+            likeCountQuery.eq("moment_id", moment.getMomentId()).eq("is_delete", 0);
+            vo.setLikeCount((int) momentLikeService.count(likeCountQuery));
+
+            // 评论数
+            QueryWrapper<MomentComment> commentCountQuery = new QueryWrapper<>();
+            commentCountQuery.eq("moment_id", moment.getMomentId()).eq("is_delete", 0);
+            vo.setCommentCount((int) momentCommentService.count(commentCountQuery));
+
+            // 当前用户是否点赞
+            QueryWrapper<MomentLike> likedQuery = new QueryWrapper<>();
+            likedQuery.eq("moment_id", moment.getMomentId())
+                    .eq("user_id", userId)
+                    .eq("is_delete", 0);
+            vo.setLiked(momentLikeService.count(likedQuery) > 0);
+
+            // 作者信息
+            User author = userService.getById(moment.getUserId());
+            if (author != null) {
+                vo.setUser(new com.shanyangcode.infinitechat.momentservice.data.getMomentList.MomentUserVO()
+                        .setUserId(String.valueOf(author.getUserId()))
+                        .setUserName(author.getUserName())
+                        .setAvatar(author.getAvatar()));
+            }
+
+            result.add(vo);
+        }
+        return result;
+    }
 }
