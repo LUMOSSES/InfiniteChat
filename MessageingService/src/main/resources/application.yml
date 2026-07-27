@@ -10,7 +10,7 @@
         fail-fast: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:13306/infiniteChat?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:13306/imhub?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
     password: gK3T9n%q2M@j7Z4
     hikari:
@@ -39,7 +39,7 @@
     bootstrap-servers:
       - 127.0.0.1:19092
     consumer:
-      group-id: thousnads_word_message_all
+      group-id: imhub_message_group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer

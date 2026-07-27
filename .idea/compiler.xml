@@ -13,15 +13,24 @@
         <module name="GateWay" />
         <module name="MessageingService" />
       </profile>
-      <profile name="Annotation profile for InfiniteChat" enabled="true">
+      <profile name="Annotation profile for IMHub" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar" />
         </processorPath>
-        <module name="MomentService" />
         <module name="AuthenticationService" />
+      </profile>
+      <profile name="Annotation profile for MomentService" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar" />
+        </processorPath>
+        <module name="MomentService" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

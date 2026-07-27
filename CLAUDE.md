@@ -48,26 +48,26 @@ cd <ServiceModule> && mvn spring-boot:run
 
 **Service discovery**: Nacos 2.3.0 at `127.0.0.1:18375`. Every service registers with Nacos and the Gateway resolves routes via `lb://<serviceName>`. Nacos 2.x uses gRPC on port offset +1000 — the Nacos Docker container maps both `18375:8848` and `9848:9848`. The `docker-compose-infra.yml` MUST map the gRPC port.
 
-**Inter-service calls**: Only one FeignClient exists — `MessageingService` calls `ContactService` via `@FeignClient("ContactService")`. Other services are independent.
+**Inter-service calls**: Only one FeignClient exists — `MessagingService` calls `ContactService` via `@FeignClient("ContactService")`. Other services are independent.
 
-**Async messaging**: Kafka at `127.0.0.1:19092`. `MessageingService` produces, `OfflineDataStoreService` consumes. Group id: `thousnads_word_message_all`.
+**Async messaging**: Kafka at `127.0.0.1:19092`. `MessagingService` produces, `OfflineDataStoreService` consumes. Group id: `imhub_message_group`.
 
 ## Key Infrastructure (Docker)
 
 | Component | Host Port | Container | Credentials |
 |---|---|---|---|
-| MySQL 8.0 | 13306 | infinitechat-mysql | root / `gK3T9n%q2M@j7Z4` |
-| Redis 7 | 59000 | infinitechat-redis | password `e65K4t8w2` |
-| Nacos 2.3.0 | 18375 (+ gRPC 9848) | infinitechat-nacos | no auth |
-| MinIO | 9000 (console 9001) | infinitechat-minio | minioadmin / minioadmin |
-| Kafka | 19092 | infinitechat-kafka | — |
-| ZooKeeper | 2181 | infinitechat-zookeeper | — |
+| MySQL 8.0 | 13306 | imhub-mysql | root / `gK3T9n%q2M@j7Z4` |
+| Redis 7 | 59000 | imhub-redis | password `e65K4t8w2` |
+| Nacos 2.3.0 | 18375 (+ gRPC 9848) | imhub-nacos | no auth |
+| MinIO | 9000 (console 9001) | imhub-minio | minioadmin / minioadmin |
+| Kafka | 19092 | imhub-kafka | — |
+| ZooKeeper | 2181 | imhub-zookeeper | — |
 
 Start all with: `docker compose -f docker-compose-infra.yml up -d`
 
 ## Gateway Routing
 
-All routes use Nacos load-balanced URIs (`lb://<service>`). The Gateway adds `X-Request-Source: InfiniteChat-GateWay` to AuthenticationService requests:
+All routes use Nacos load-balanced URIs (`lb://<service>`). The Gateway adds `X-Request-Source: IMHub-Gateway` to AuthenticationService requests:
 
 | Path Prefix | Service |
 |---|---|
@@ -81,22 +81,22 @@ All routes use Nacos load-balanced URIs (`lb://<service>`). The Gateway adds `X-
 
 ## Request-Origin Guard (SourceHandler)
 
-`AuthenticationService` has a `SourceHandler` interceptor that rejects requests (HTTP 400, code 40301) unless `X-Request-Source: InfiniteChat-GateWay` is present. This applies to ALL paths (`/**`). The Gateway adds this header automatically. Direct calls to AuthenticationService on port 8082 will be rejected — always go through Gateway (10010).
+`AuthenticationService` has a `SourceHandler` interceptor that rejects requests (HTTP 400, code 40301) unless `X-Request-Source: IMHub-Gateway` is present. This applies to ALL paths (`/**`). The Gateway adds this header automatically. Direct calls to AuthenticationService on port 8082 will be rejected — always go through Gateway (10010).
 
 A separate `JwtHandler` interceptor only fires on `/api/v1/user/avatar`.
 
 ## JWT
 
 - Algorithm: HS512
-- Secret key: `goat` (defined in `ConfigEnum.TOKEN_SECRET_KEY` in both AuthenticationService and RealTimeCommunicationService)
-- Password salt: also `goat`
+- Secret key: defined in `ConfigEnum.TOKEN_SECRET_KEY` across services
+- Password salt: defined in `ConfigEnum.PASSWORD_SALT`
 - Expiration: 2 days (`TimeOutEnum.JWT_TIME_OUT`)
 - Token subject is the user ID (Long)
 - Gateway parses JWT with jjwt 0.9.1
 
 ## Database
 
-13 tables in `infiniteChat` database: `user`, `friend`, `apply_friend`, `session`, `user_session`, `message`, `red_packet`, `red_packet_receive`, `user_balance`, `balance_log`, `moment`, `moment_like`, `moment_comment`. Full DDL in `init.sql` at repo root.
+13 tables in `imhub` database: `user`, `friend`, `apply_friend`, `session`, `user_session`, `message`, `red_packet`, `red_packet_receive`, `user_balance`, `balance_log`, `moment`, `moment_like`, `moment_comment`. Full DDL in `init.sql` at repo root.
 
 MyBatis-Plus 3.5.x is used across all data-access services. SQL logging is enabled (`StdOutImpl`).
 
@@ -110,4 +110,4 @@ MyBatis-Plus 3.5.x is used across all data-access services. SQL logging is enabl
 
 ## Postman Collection
 
-`InfiniteChat.postman_collection.json` at repo root covers all 6 service groups with pre-request scripts (auto-login, token save) and test assertions. Collection variables: `baseUrl` (default `http://localhost:10010`), `email`, `password`, `token`, `loginUserId`, etc.
+`IMHub.postman_collection.json` at repo root covers all 6 service groups with pre-request scripts (auto-login, token save) and test assertions. Collection variables: `baseUrl` (default `http://localhost:10010`), `email`, `password`, `token`, `loginUserId`, etc.

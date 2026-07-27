@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.shanyangcode.infinitechat</groupId>
-    <artifactId>MessageingService</artifactId>
+    <groupId>com.imhub</groupId>
+    <artifactId>MessagingService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>MessageingService</name>
-    <description>MessageingService</description>
+    <name>MessagingService</name>
+    <description>MessagingService - Chat messaging and red packets</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -139,7 +139,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>com.shanyangcode.infinitechat.messageingservice.MessageingServiceApplication</mainClass>
+                    <mainClass>com.imhub.messaging.MessageingServiceApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

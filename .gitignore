@@ -1,0 +1,21 @@
+# Maven
+target/
+*.jar
+*.war
+!target/*.jar
+
+# Maven effective-pom (generated, may contain stale metadata)
+effective-pom
+effective-pom.xml
+
+# IDE
+.idea/workspace.xml
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

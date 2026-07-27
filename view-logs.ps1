@@ -7,12 +7,12 @@ param(
 )
 
 $tmpDir = $env:TEMP
-$services = @("AuthenticationService", "GateWay", "MessageingService", "RealTimeCommunicationService", "ContanctService", "OfflineDataStoreService", "MomentService")
+$services = @("AuthService", "Gateway", "MessagingService", "RealTimeService", "ContactService", "OfflineService", "MomentService")
 
 function Show-Log {
     param($svc, $tail)
     $suffix = if ($Error) { "-err.log" } else { ".log" }
-    $log = "$tmpDir\infinitechat-$svc$suffix"
+    $log = "$tmpDir\imhub-$svc$suffix"
     if (Test-Path $log) {
         Write-Host "`n=== $svc ($suffix) ===" -ForegroundColor Green
         if ($Follow) {

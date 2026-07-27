@@ -24,7 +24,6 @@
       "Bash(Get-ChildItem *)",
       "Bash(mvn compile *)",
       "Bash(Select-Object -Last 30)",
-      "PowerShell($bytes = [System.IO.File]::ReadAllBytes\\(\"D:\\\\Desktop\\\\InfiniteChat\\\\ContanctService\\\\src\\\\main\\\\java\\\\com\\\\shangyangcode\\\\infinitechat\\\\contactservice\\\\service\\\\impl\\\\ApplyFriendServiceImpl.java\"\\); if \\($bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF\\) { Write-Output \"BOM found!\" } else { Write-Output \"No BOM, first bytes: $\\([BitConverter]::ToString\\($bytes[0..5]\\)\\)\" })",
       "PowerShell(java *)",
       "PowerShell(mvn compile *)",
       "PowerShell(try { $response = Invoke-WebRequest -Uri \"http://127.0.0.1:10010/api/v1/user/login\" -Method POST -ContentType \"application/json\" -Body '{\"email\":\"test@test.com\",\"password\":\"123456\"}' -TimeoutSec 5; $response.StatusCode } catch { $_.Exception.Message })",
@@ -79,7 +78,17 @@
       "Bash(gh auth *)",
       "WebFetch(domain:github.com)",
       "Read(//d/Desktop/InfinteChat-Agent/**)",
-      "Read(//d/Desktop/IM-Agent/**)"
+      "Read(//d/Desktop/IM-Agent/**)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-17.0.18.8-hotspot\"; Set-Location D:\\\\Desktop\\\\InfiniteChat\\\\GateWay; Start-Process -FilePath \"$env:JAVA_HOME\\\\bin\\\\java.exe\" -ArgumentList \"-jar\", \"target\\\\Gateway-0.0.1-SNAPSHOT.jar\" -NoNewWindow -RedirectStandardOutput \"..\\\\gateway-stdout.log\" -RedirectStandardError \"..\\\\gateway-stderr.log\"; Write-Output \"Gateway starting...\")",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-17.0.18.8-hotspot\"; Set-Location D:\\\\Desktop\\\\InfiniteChat\\\\AuthenticationService; Start-Process -FilePath \"$env:JAVA_HOME\\\\bin\\\\java.exe\" -ArgumentList \"-jar\", \"target\\\\AuthService-0.0.1-SNAPSHOT.jar\" -NoNewWindow -RedirectStandardOutput \"..\\\\auth-stdout.log\" -RedirectStandardError \"..\\\\auth-stderr.log\"; Write-Output \"AuthService starting...\")",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-17.0.18.8-hotspot\"; Set-Location D:\\\\Desktop\\\\InfiniteChat\\\\RealTimeCommunicationService; Start-Process -FilePath \"$env:JAVA_HOME\\\\bin\\\\java.exe\" -ArgumentList \"-jar\", \"target\\\\RealTimeService-0.0.1-SNAPSHOT.jar\" -NoNewWindow -RedirectStandardOutput \"..\\\\rtc-stdout.log\" -RedirectStandardError \"..\\\\rtc-stderr.log\"; Write-Output \"RealTimeService starting...\")",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-17.0.18.8-hotspot\"; Set-Location D:\\\\Desktop\\\\InfiniteChat\\\\MessageingService; Start-Process -FilePath \"$env:JAVA_HOME\\\\bin\\\\java.exe\" -ArgumentList \"-jar\", \"target\\\\MessagingService-0.0.1-SNAPSHOT.jar\" -NoNewWindow -RedirectStandardOutput \"..\\\\messaging-stdout.log\" -RedirectStandardError \"..\\\\messaging-stderr.log\"; Write-Output \"MessagingService starting...\")",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-17.0.18.8-hotspot\"; Set-Location D:\\\\Desktop\\\\InfiniteChat\\\\ContanctService; Start-Process -FilePath \"$env:JAVA_HOME\\\\bin\\\\java.exe\" -ArgumentList \"-jar\", \"target\\\\ContactService-0.0.1-SNAPSHOT.jar\" -NoNewWindow -RedirectStandardOutput \"..\\\\contact-stdout.log\" -RedirectStandardError \"..\\\\contact-stderr.log\"; Write-Output \"ContactService starting...\")",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-17.0.18.8-hotspot\"; Set-Location D:\\\\Desktop\\\\InfiniteChat\\\\OfflineDataStoreService; Start-Process -FilePath \"$env:JAVA_HOME\\\\bin\\\\java.exe\" -ArgumentList \"-jar\", \"target\\\\OfflineService-0.0.1-SNAPSHOT.jar\" -NoNewWindow -RedirectStandardOutput \"..\\\\offline-stdout.log\" -RedirectStandardError \"..\\\\offline-stderr.log\"; Write-Output \"OfflineService starting...\")",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-17.0.18.8-hotspot\"; Set-Location D:\\\\Desktop\\\\InfiniteChat\\\\MomentService; Start-Process -FilePath \"$env:JAVA_HOME\\\\bin\\\\java.exe\" -ArgumentList \"-jar\", \"target\\\\MomentService-0.0.1-SNAPSHOT.jar\" -NoNewWindow -RedirectStandardOutput \"..\\\\moment-stdout.log\" -RedirectStandardError \"..\\\\moment-stderr.log\"; Write-Output \"MomentService starting...\")",
+      "Bash(docker exec mysql *)",
+      "Bash(docker exec *)",
+      "Bash(findstr /I \"effective-pom\")"
     ]
   }
 }

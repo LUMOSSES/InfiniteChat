@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "6cce0ed5-2150-4cdb-9ea0-7fd5f40f5743",
-    "name": "InfiniteChat",
-    "description": "Postman collection covering all 7 InfiniteChat microservices via Gateway (port 10010).",
+    "name": "IMHub",
+    "description": "Postman collection covering all 7 IMHub microservices via Gateway (port 10010).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -555,7 +555,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": {{loginUserId}},\n  \"text\": \"Hello InfiniteChat!\",\n  \"mediaUrls\": [\"https://example.com/p1.jpg\"]\n}"
+              "raw": "{\n  \"userId\": {{loginUserId}},\n  \"text\": \"Hello IMHub!\",\n  \"mediaUrls\": [\"https://example.com/p1.jpg\"]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/moment",
@@ -726,7 +726,7 @@
     },
     {
       "key": "avatarUrl",
-      "value": "http://localhost:9000/infinite-chat/avatar.png",
+      "value": "http://localhost:9000/imhub/avatar.png",
       "type": "string"
     },
     {

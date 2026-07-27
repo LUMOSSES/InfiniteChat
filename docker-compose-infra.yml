@@ -3,12 +3,12 @@ version: "3.8"
 services:
   mysql:
     image: mysql:8.0
-    container_name: infinitechat-mysql
+    container_name: imhub-mysql
     ports:
-      - "49152:3306"
+      - "13306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: gK3T9n%q2M@j7Z4
-      MYSQL_DATABASE: infiniteChat
+      MYSQL_DATABASE: imhub
       TZ: Asia/Shanghai
     command:
       - --default-authentication-plugin=mysql_native_password
@@ -20,7 +20,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: infinitechat-redis
+    container_name: imhub-redis
     ports:
       - "59000:6379"
     command: redis-server --requirepass e65K4t8w2
@@ -29,7 +29,7 @@ services:
 
   nacos:
     image: nacos/nacos-server:v2.3.0
-    container_name: infinitechat-nacos
+    container_name: imhub-nacos
     ports:
       - "18375:8848"
       - "9848:9848"
@@ -39,7 +39,7 @@ services:
 
   minio:
     image: minio/minio:latest
-    container_name: infinitechat-minio
+    container_name: imhub-minio
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -52,7 +52,7 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
-    container_name: infinitechat-zookeeper
+    container_name: imhub-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:
@@ -60,7 +60,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: infinitechat-kafka
+    container_name: imhub-kafka
     depends_on:
       - zookeeper
     ports:

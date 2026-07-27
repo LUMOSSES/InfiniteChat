@@ -1,7 +1,7 @@
 version: '3.8'
 services:
-  authenticationservice:
-    container_name: authenticationservice
+  authservice:
+    container_name: authservice
     build:
       context: ./AuthenticationService
       dockerfile: Dockerfile
@@ -53,8 +53,8 @@ services:
         reservations:
           memory: 256M
 
-  realtimecommunicationservice:
-    container_name: realtimecommunicationservice
+  realtimeservice:
+    container_name: realtimeservice
     build:
       context: ./RealTimeCommunicationService
       dockerfile: Dockerfile
@@ -71,8 +71,8 @@ services:
         reservations:
           memory: 512M
 
-  offlinedatastore:
-    container_name: offlinedatastore
+  offlineservice:
+    container_name: offlineservice
     build:
       context: ./OfflineDataStoreService
       dockerfile: Dockerfile

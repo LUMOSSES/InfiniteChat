@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.shangyangcode.infinitechat</groupId>
-    <artifactId>OfflineDataStoreService</artifactId>
+    <groupId>com.imhub</groupId>
+    <artifactId>OfflineService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>OfflineDataStoreService</name>
-    <description>OfflineDataStoreService</description>
+    <name>OfflineService</name>
+    <description>OfflineService - Offline message persistence</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -118,7 +118,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>
-                        com.shangyangcode.infinitechat.offlinedatastoreservice.OfflineDataStoreServiceApplication
+                        com.imhub.offline.OfflineDataStoreServiceApplication
                     </mainClass>
                 </configuration>
                 <executions>
