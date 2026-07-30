@@ -194,9 +194,9 @@ export default function AiChat() {
                 <Bot className="w-10 h-10 text-primary" />
               </div>
               <div className="text-center">
-                <h2 className="text-xl font-bold text-text mb-2">IMHub AI 助手</h2>
+                <h2 className="text-xl font-bold text-text mb-2">Threadora AI 助手</h2>
                 <p className="text-sm text-text-secondary max-w-sm leading-relaxed">
-                  我是 IMHub 的智能助手，可以回答关于项目的问题、帮助生成消息模板、或进行一般对话。
+                  我是 Threadora 的智能助手，可以回答关于项目的问题、帮助生成消息模板、或进行一般对话。
                 </p>
               </div>
               <button

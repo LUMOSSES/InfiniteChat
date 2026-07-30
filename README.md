@@ -1,6 +1,6 @@
-# InfiniteChat
+# Threadora
 
-InfiniteChat 是一个基于 Spring Boot 的聊天系统后端工程，当前仓库以多模块 Maven 项目组织，已经包含认证服务和网关两个核心模块。
+Threadora 是一个基于 Spring Boot 的聊天系统后端工程，当前仓库以多模块 Maven 项目组织，已经包含认证服务和网关两个核心模块。
 
 ## 项目定位
 
@@ -19,7 +19,7 @@ InfiniteChat 是一个基于 Spring Boot 的聊天系统后端工程，当前仓
 ## 项目结构
 
 ```text
-InfiniteChat
+Threadora
 ├─ pom.xml
 ├─ AuthenticationService
 └─ GateWay

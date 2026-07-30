@@ -12,7 +12,7 @@ $services = @("AuthService", "Gateway", "MessagingService", "RealTimeService", "
 function Show-Log {
     param($svc, $tail)
     $suffix = if ($Error) { "-err.log" } else { ".log" }
-    $log = "$tmpDir\imhub-$svc$suffix"
+    $log = "$tmpDir\threadora-$svc$suffix"
     if (Test-Path $log) {
         Write-Host "`n=== $svc ($suffix) ===" -ForegroundColor Green
         if ($Follow) {

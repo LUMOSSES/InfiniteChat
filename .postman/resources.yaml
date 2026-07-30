@@ -4,9 +4,9 @@ workspace:
 
 localResources:
   collections:
-    - ..\InfiniteChat.postman_collection.json
+    - ..\Threadora.postman_collection.json
 
 # Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
 cloudResources:
   collections:
-    ..\postman\collections\InfiniteChat: 1e90cdb3-cb16-46f7-a0ab-6b92c9b2e684
+    ..\postman\collections\Threadora: 1e90cdb3-cb16-46f7-a0ab-6b92c9b2e684

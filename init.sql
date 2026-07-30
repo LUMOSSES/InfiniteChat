@@ -1,8 +1,8 @@
--- IMHub Database Initialization Script
+-- Threadora Database Initialization Script
 -- Auto-executes on MySQL container first startup
 
-CREATE DATABASE IF NOT EXISTS `imhub` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `imhub`;
+CREATE DATABASE IF NOT EXISTS `threadora` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `threadora`;
 
 -- 1. 用户表
 CREATE TABLE IF NOT EXISTS `user` (

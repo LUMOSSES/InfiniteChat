@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.imhub.moment.mapper.MomentLikeMapper">
+<mapper namespace="com.threadora.moment.mapper.MomentLikeMapper">
 
-    <resultMap id="BaseResultMap" type="com.imhub.moment.model.MomentLike">
+    <resultMap id="BaseResultMap" type="com.threadora.moment.model.MomentLike">
             <id property="likeId" column="like_id" jdbcType="BIGINT"/>
             <result property="momentId" column="moment_id" jdbcType="BIGINT"/>
             <result property="userId" column="user_id" jdbcType="BIGINT"/>

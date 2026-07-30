@@ -1,10 +1,10 @@
-# InfiniteChat 项目面试介绍
+# Threadora 项目面试介绍
 
 ---
 
 ## 一、项目概览
 
-InfiniteChat 是一个**即时通讯（IM）社交平台**，后端采用 **Spring Cloud 微服务架构**，共计 **7 个微服务**，覆盖用户认证、好友关系、即时消息、朋友圈、红包、离线消息等完整功能。项目从零搭建，包含基础设施选型、服务拆分、通信方案设计、数据库建模、安全防护等全流程。
+Threadora 是一个**即时通讯（IM）社交平台**，后端采用 **Spring Cloud 微服务架构**，共计 **7 个微服务**，覆盖用户认证、好友关系、即时消息、朋友圈、红包、离线消息等完整功能。项目从零搭建，包含基础设施选型、服务拆分、通信方案设计、数据库建模、安全防护等全流程。
 
 - **代码规模**：7 个 Maven 模块，13 张数据库表，6 套 Docker 基础设施
 - **核心指标**：支持 WebSocket 长连接实时通信、Kafka 异步消息、Redis Lua 原子操作
@@ -195,7 +195,7 @@ IM 是互联网中最经典的高并发场景之一，技术挑战集中：
 
 ### 5.5 SourceHandler 安全拦截器
 
-**问题**：AuthenticationService 内部所有接口都有 SourceHandler 校验 `X-Request-Source: InfiniteChat-GateWay` 请求头。如果直接调用 AuthenticationService（跳关 Gateway），会返回 400 错误码 40301 "非法请求来源"。
+**问题**：AuthenticationService 内部所有接口都有 SourceHandler 校验 `X-Request-Source: Threadora-GateWay` 请求头。如果直接调用 AuthenticationService（跳关 Gateway），会返回 400 错误码 40301 "非法请求来源"。
 
 **设计原因**：这是一种**简单有效的纵深防御**——确保所有外部请求必须通过 Gateway 这一层进入，防止内部服务直接被外部访问。Gateway 在路由配置中为该服务自动添加此请求头。
 

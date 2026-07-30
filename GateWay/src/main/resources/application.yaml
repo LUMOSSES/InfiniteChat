@@ -1,4 +1,4 @@
-﻿server:
+server:
   port: 10010
 
 spring:
@@ -40,8 +40,8 @@ spring:
           predicates:
             - Path=/api/v1/user/**
           filters:
-            - AddRequestHeader=X-Request-Source, IMHub-Gateway
-            - AddResponseHeader=X-Response-Source, IMHub-Gateway
+            - AddRequestHeader=X-Request-Source, Threadora-Gateway
+            - AddResponseHeader=X-Response-Source, Threadora-Gateway
 
         - id: RealTimeCommunicationService
           uri: lb://RealTimeCommunicationService
@@ -73,10 +73,10 @@ spring:
           predicates:
             - Path=/api/v1/contact/**
 
-        - id: IMHubAgent
+        - id: ThreadoraAgent
           uri: http://127.0.0.1:8087
           predicates:
             - Path=/api/v1/ai/**
           filters:
             - RewritePath=/api/v1/ai/(?<segment>.*), /api/${segment}
-            - AddRequestHeader=X-Request-Source, InfiniteChat-GateWay
+            - AddRequestHeader=X-Request-Source, Threadora-GateWay

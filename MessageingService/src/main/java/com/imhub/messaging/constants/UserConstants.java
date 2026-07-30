@@ -1,5 +1,0 @@
-package com.imhub.messaging.constants;
-
-public class UserConstants {
-    public static final String USER_SESSION = "user:session:";
-}

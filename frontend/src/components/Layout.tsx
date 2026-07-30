@@ -46,7 +46,7 @@ export default function Layout() {
                 <MessageCircle className="w-4 h-4 text-white" />
               </div>
               <span className="text-lg font-bold text-text tracking-tight hidden sm:block">
-                InfiniteChat
+                Threadora
               </span>
             </NavLink>
 
@@ -145,7 +145,7 @@ export default function Layout() {
 
       {/* Footer */}
       <footer className="hidden md:block py-6 text-center text-xs text-text-muted border-t border-border">
-        InfiniteChat &copy; {new Date().getFullYear()} &mdash; Built for real connections
+        Threadora &copy; {new Date().getFullYear()} &mdash; Built for real connections
       </footer>
     </div>
   );

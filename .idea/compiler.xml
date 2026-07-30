@@ -13,7 +13,7 @@
         <module name="GateWay" />
         <module name="MessageingService" />
       </profile>
-      <profile name="Annotation profile for IMHub" enabled="true">
+      <profile name="Annotation profile for Threadora" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />

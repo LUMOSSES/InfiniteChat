@@ -1,5 +1,5 @@
 $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot"
-$baseDir = "D:\Desktop\InfiniteChat"
+$baseDir = "D:\Desktop\Threadora"
 $agentDir = "D:\Desktop\IM-Agent"
 $tmpDir = $env:TEMP
 
@@ -11,13 +11,13 @@ $jars = [ordered]@{
     "MessagingService"  = "$baseDir\MessageingService\target\MessagingService-0.0.1-SNAPSHOT.jar";
     "OfflineService"    = "$baseDir\OfflineDataStoreService\target\OfflineService-0.0.1-SNAPSHOT.jar";
     "MomentService"     = "$baseDir\MomentService\target\MomentService-0.0.1-SNAPSHOT.jar";
-    "IMHub-Agent"       = "$agentDir\target\IMHub-Agent-0.0.1-SNAPSHOT.jar"
+    "Threadora-Agent"       = "$agentDir\target\Threadora-Agent-0.0.1-SNAPSHOT.jar"
 }
 
 foreach ($svc in $jars.Keys) {
     $jar = $jars[$svc]
-    $log = "$tmpDir\imhub-$svc.log"
-    $errLog = "$tmpDir\imhub-$svc-err.log"
+    $log = "$tmpDir\threadora-$svc.log"
+    $errLog = "$tmpDir\threadora-$svc-err.log"
     $proc = Start-Process java `
         -ArgumentList "-jar", "`"$jar`"" `
         -PassThru `
@@ -33,7 +33,7 @@ Start-Sleep -Seconds 18
 
 Write-Host "`n=== Service Status ==="
 foreach ($svc in $jars.Keys) {
-    $log = "$tmpDir\imhub-$svc.log"
+    $log = "$tmpDir\threadora-$svc.log"
     if (Test-Path $log) {
         $started = Select-String -Path $log -Pattern "Started.*Application" -SimpleMatch -Quiet
         $agentOk = Select-String -Path $log -Pattern "register finished" -SimpleMatch -Quiet

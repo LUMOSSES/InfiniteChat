@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.imhub.messaging.mapper.UserSessionMapper">
+<mapper namespace="com.threadora.messaging.mapper.UserSessionMapper">
 
-    <resultMap id="BaseResultMap" type="com.imhub.messaging.model.UserSession">
+    <resultMap id="BaseResultMap" type="com.threadora.messaging.model.UserSession">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="userId" column="user_id" jdbcType="BIGINT"/>
             <result property="sessionId" column="session_id" jdbcType="BIGINT"/>

@@ -6,7 +6,7 @@ import { messageApi } from '../api/message';
 import { offlineApi } from '../api/offline';
 import { contactApi } from '../api/contact';
 import UserAvatar from '../components/UserAvatar';
-import { Send, MessageCircle, Wifi, WifiOff, AlertCircle, UserPlus, ChevronLeft } from 'lucide-react';
+import { Send, MessageCircle, AlertCircle, UserPlus, ChevronLeft } from 'lucide-react';
 import type { ContactUser, Message } from '../types';
 
 function formatTime(iso: string) {

@@ -1,14 +1,15 @@
 version: "3.8"
+name: threadora
 
 services:
   mysql:
     image: mysql:8.0
-    container_name: imhub-mysql
+    container_name: threadora-mysql
     ports:
       - "13306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: gK3T9n%q2M@j7Z4
-      MYSQL_DATABASE: imhub
+      MYSQL_DATABASE: threadora
       TZ: Asia/Shanghai
     command:
       - --default-authentication-plugin=mysql_native_password
@@ -20,7 +21,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: imhub-redis
+    container_name: threadora-redis
     ports:
       - "59000:6379"
     command: redis-server --requirepass e65K4t8w2
@@ -29,7 +30,7 @@ services:
 
   nacos:
     image: nacos/nacos-server:v2.3.0
-    container_name: imhub-nacos
+    container_name: threadora-nacos
     ports:
       - "18375:8848"
       - "9848:9848"
@@ -39,7 +40,7 @@ services:
 
   minio:
     image: minio/minio:latest
-    container_name: imhub-minio
+    container_name: threadora-minio
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -52,7 +53,7 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
-    container_name: imhub-zookeeper
+    container_name: threadora-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:
@@ -60,7 +61,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: imhub-kafka
+    container_name: threadora-kafka
     depends_on:
       - zookeeper
     ports:

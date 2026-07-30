@@ -1,4 +1,4 @@
-# InfiniteChat Postman 验收清单（中文详细版）
+# Threadora Postman 验收清单（中文详细版）
 
 本清单基于你当前仓库里的真实 Controller 路径、Gateway 路由和现有 Postman 请求文件整理。
 
@@ -93,7 +93,7 @@
 
 ### 4.1 发送邮箱验证码
 
-请求文件：postman/collections/InfiniteChat-API/Common/send-email-code.request.yaml
+请求文件：postman/collections/Threadora-API/Common/send-email-code.request.yaml
 
 1. Method: GET
 2. URL: {{baseUrl}}/api/v1/user/common/email
@@ -108,7 +108,7 @@
 
 ### 4.2 发送短信验证码（当前实现与邮箱同处理）
 
-请求文件：postman/collections/InfiniteChat-API/Common/send-sms-code.request.yaml
+请求文件：postman/collections/Threadora-API/Common/send-sms-code.request.yaml
 
 1. Method: GET
 2. URL: {{baseUrl}}/api/v1/user/common/sms
@@ -123,7 +123,7 @@
 
 ### 4.3 注册
 
-请求文件：postman/collections/InfiniteChat-API/User/register.request.yaml
+请求文件：postman/collections/Threadora-API/User/register.request.yaml
 
 1. Method: POST
 2. URL: {{baseUrl}}/api/v1/user/register
@@ -147,7 +147,7 @@
 
 ### 4.4 密码登录
 
-请求文件：postman/collections/InfiniteChat-API/User/login.request.yaml
+请求文件：postman/collections/Threadora-API/User/login.request.yaml
 
 1. Method: POST
 2. URL: {{baseUrl}}/api/v1/user/login
@@ -173,7 +173,7 @@
 
 ### 4.5 验证码登录
 
-请求文件：postman/collections/InfiniteChat-API/User/login-with-code.request.yaml
+请求文件：postman/collections/Threadora-API/User/login-with-code.request.yaml
 
 1. Method: POST
 2. URL: {{baseUrl}}/api/v1/user/loginCode
@@ -195,7 +195,7 @@
 
 ### 4.6 获取上传地址
 
-请求文件：postman/collections/InfiniteChat-API/Common/get-upload-url.request.yaml
+请求文件：postman/collections/Threadora-API/Common/get-upload-url.request.yaml
 
 1. Method: GET
 2. URL: {{baseUrl}}/api/v1/user/common/uploadUrl
@@ -211,7 +211,7 @@
 
 ### 4.7 更新头像
 
-请求文件：postman/collections/InfiniteChat-API/User/update-avatar.request.yaml
+请求文件：postman/collections/Threadora-API/User/update-avatar.request.yaml
 
 1. Method: PATCH
 2. URL: {{baseUrl}}/api/v1/user/avatar

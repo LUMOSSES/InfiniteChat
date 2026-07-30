@@ -76,10 +76,10 @@ export default function Register() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
                 <MessageCircle className="w-4 h-4 text-white" />
               </div>
-              <span className="text-lg font-bold text-text tracking-tight">InfiniteChat</span>
+              <span className="text-lg font-bold text-text tracking-tight">Threadora</span>
             </Link>
             <h1 className="text-2xl font-bold text-text">Create account</h1>
-            <p className="text-text-secondary mt-1.5 text-sm">Join InfiniteChat and start connecting</p>
+            <p className="text-text-secondary mt-1.5 text-sm">Join Threadora and start connecting</p>
           </div>
 
           {/* Card */}
